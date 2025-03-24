@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREATE QUIZ</title>
+    <link rel="stylesheet" href="/style1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <a href="/">
+        <i class="fa-solid fa-house" style="color:#7B16FF; font-size: 24px;"></i>
+    </a>
+    <br>
+    <form action="/createquiz" method="POST">
+    <label for="quiztopic"> <h2>Enter Quiz Topic : </h2></label>
+    <input type="text" id="quiztopic" name="quiztopic" autofocus required>
+    <button type="submit">CREATE QUIZ</button>
+    <br>
+    <% if(newQuiz.questions.length!=0){ %>
+    <p>Your Quiz code is : <%=newQuiz.number%></p>
+    <% } %>
+    </form>
+</body>
+</html>

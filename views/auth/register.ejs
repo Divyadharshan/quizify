@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizify - REGISTER</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <%- include("../partials/flash") %>
+            <div class="login-container">
+            <h1>QUIZIFY</h1>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <a href="/auth/google" style="text-decoration: none;">
+                    <button style="display: flex;">
+                        <img src="https://sm.pcmag.com/pcmag_me/review/g/google-doc/google-docs-sheets-and-slides_f6we.png"
+                            alt="Google Logo" style="width: 20px; height: 20px; margin-right: 10px;">
+                        Sign Up with Google
+                    </button>
+                </a>
+            </div>
+            <br>
+            or
+            <form action="/register" method="POST">
+            <label for="username">Username </label>
+            <input type="text" id="username" name="username" autofocus required>
+            <label for="email">Email </label>
+            <input type="email" id="email" name="email" autofocus required>
+            <button type="submit" style="width:60%;">VERIFY & REGISTER</button>
+            <p>Already have an account? <a href="/login" style="color:#7B16FF; text-decoration:none;">Login</a></p>
+        </form>
+        </div>
+</body>
+
+</html>

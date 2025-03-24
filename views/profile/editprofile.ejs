@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDIT PROFILE</title>
+    <link rel="stylesheet" href="/style1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <%- include("./partials/flash") %>
+    <a href="/">
+        <i class="fa-solid fa-house" style="color:#7B16FF; font-size: 24px;"></i>
+    </a>
+    <br><br>
+    <form action="/editprofile?_method=PUT" method="POST" enctype="multipart/form-data">
+        <h2>Edit your profile</h2>
+        <label for="username">Username </label>
+        <input type="text" id="username" name="username" autofocus>
+        <label for="image">Upload Image</label>
+        <input type="file" id="image" name="image"> 
+    <button type="submit">Save</button>
+    </form>
+</body>
+</html>

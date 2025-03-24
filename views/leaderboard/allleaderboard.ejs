@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+    
+    <a href="/show">
+        <i class="fa-solid fa-house" style="color:#7B16FF; font-size: 24px;"></i>
+    </a>
+    
+    
+    <div class="l-wrapper">
+    <div class="c-card">
+        <div class="c-card__header">
+            <h2>All Time Leaderboard</h2>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Total Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <% data.forEach((dataa,index) => { %>
+                        <tr>
+                        <td ><%=index+1%></td>
+                            <td class="username">
+                                <img class="profile-pic" src="<%= dataa.profilePicture %>" alt="Profile Picture">
+                                <a href="/profile/<%=dataa.username%>" style="text-decoration: none;color: #7B16FF"><%= dataa.username %></a>
+                            </td>
+                            <td><%= dataa.totalScore %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

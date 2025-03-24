@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZIFY</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <img src="logo.png" width="350" height="250">
+    <div>
+        <h2>WELCOME TO QUIZIFY, SOLVE & EXPLORE NEW QUIZZES EVERYDAY</h2>
+        <a href="/profile/<%=currentUser.username%>">
+        <button class="profile-btn">
+            <i class="fa-solid fa-user"></i> PROFILE
+        </button>
+        </a>
+        <a href="/show">
+        <button class="attendquiz-btn">
+            <i class="fa-solid fa-calendar-day"></i>&nbsp;Daily Quiz
+        </button>
+        </a>
+        <a href="/viewquizzes/<%=currentUser._id%>">
+        <button class="attendquiz-btn">
+            <i class="fa-solid fa-list-check"></i>&nbsp;Your Quizzes
+        </button>
+        </a>
+        <a href="/attendquiz">
+        <button class="attendquiz-btn">
+            <i class="fa-solid fa-q"></i>&nbsp;&nbsp;Attend Quiz
+        </button>
+        </a>
+        <a href="/buildquiz">
+        <button class="buildquiz">
+            <i class="fa-solid fa-plus"></i>
+            Create Quiz 
+        </button>
+        </a>
+        <a href="/createquiz">
+        <button class="createquiz">
+            <i class="fa-solid fa-plus"></i>
+            Create Quiz using AI
+        </button>
+        </a>
+        <a href="/leaderboard?type=alltime">
+            <button class="leaderboard-btn">
+                <i class="fa-solid fa-trophy"></i> Leaderboard
+            </button>
+        </a>
+        <a href="/leaderboard?type=daily">
+            <button class="dailyleaderboard-btn">
+                <i class="fa-solid fa-medal"></i> Daily Leaderboard
+            </button>
+        </a>
+        <a href="/logout">
+            <button class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
+            </button>
+        </a>
+    </div>
+    </div>
+</body>
+
+</html>

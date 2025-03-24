@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #101010;
+            color: white;
+            text-align: center;
+        }
+
+        button {
+            width: 30%;
+            margin-top: 1.5rem;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+            background: #7B16FF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+
+        .quiz-container {
+            background: #16171A;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .quiz-header {
+            margin-bottom: 10px;
+        }
+
+        .quiz-header h2 {
+            color: #7B16FF;
+        }
+
+        .quiz-header p {
+            font-size: 1rem;
+            margin: 5px 0;
+            color: #A3AFBF;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Your Quizzes</h1>
+    <% if(quizzes.length===0){ %>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h2>No Quizzes Found
+                </h2>
+            </div>
+        </div>
+    <%} else {%>
+    <% quizzes.forEach((quiz, index)=> { %>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h2>
+                    <%=index+1%>. <%= quiz.topic %>
+                </h2>
+                <p><strong>Room Code:</strong>
+                    <%= quiz.number %>
+                </p>
+                <a href="/viewquiz/<%=quiz._id%>">
+                <button>View</button>
+                </a>
+            </div>
+        </div>
+        <% }); %>
+        <% } %>
+</body>
+
+</html>

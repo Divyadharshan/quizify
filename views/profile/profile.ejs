@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USER PROFILE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #000000;
+            --white: #ffffff;
+            --darkest: #101010;
+            --darker: #16171A;
+            --dark: #A3AFBF;
+            --primary: #7B16FF;
+            --primary-trans: rgba(123, 22, 255, 0.4);
+            --bg: var(--darkest);
+            --color: var(--white);
+            --surface: var(--darker);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--color);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .card {
+            width: 450px;
+            height: 350px;
+            background: var(--surface);
+            color: var(--color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-holder img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid var(--white);
+        }
+
+        .name {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .name a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .button {
+            margin: 10px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--primary-trans);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .ds-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+
+        .ds-info div {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="avatar-holder">
+            <img src="<%=user.profilePicture%>" alt="Profile Picture">
+        </div>
+        <div class="name">
+            <a href="#">
+                <%=user.username%>
+            </a>
+            <br><br>
+            <p><i class="fas fa-users"></i> <span class="followers" id="followers">
+                    <%=user.followers.length%>
+                        <%=user.followers.length===1 ? " Follower" : " Followers" %>
+                </span></p>
+        </div>
+        <% if(currentUser){ %>
+            <% if(currentUser.username!=user.username){ %>
+                <div class="button">
+                    <% if (check===false){%>
+                        <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
+                    <%} else{ %>
+                        <button class="btn" id="fbutton">Following <i class="fas fa-user-check"></i></button>
+                    <% } %>
+                </div>
+            <% } else {%>
+                  <a href="/editprofile">
+                  <button class="btn">Edit Profile <i class="fas fa-user-edit"></i></button>
+                  </a>
+             <% } %>
+        <% } else { %>
+              <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
+        <% } %>
+                        <br>
+                        <div class="ds-info">
+                            <div>
+                                <h4>Rank</h4>
+                                <p>
+                                    <%=rank%>
+                                </p>
+                            </div>
+                            <div>
+                                <h4>Score</h4>
+                                <p>
+                                    <%=user.totalScore%>
+                                </p>
+                            </div>
+                            <div>
+                                <h4>DQ</h4>
+                                <p>
+                                    <%=user.quizAttempts.length%>
+                                </p>
+                            </div>
+                        </div>
+    </div>
+
+    <script>
+        document.getElementById("fbutton").addEventListener("click", async function () {
+            const response = await fetch("/follow/<%=user._id%>", { method: "POST" });
+            const data = await response.json();
+            if (data.followers === 1) {
+                document.getElementById("followers").innerHTML = data.followers + " Follower";
+                //console.log("hello from one");
+            }
+            else {
+                document.getElementById("followers").innerHTML = data.followers + " Followers";
+                //console.log("hello from two");
+            }
+            if (data.check === true) {
+                document.getElementById("fbutton").innerHTML = `Following <i class="fas fa-user-check"></i>`;
+            }
+            else {
+                document.getElementById("fbutton").innerHTML = `Follow <i class="fas fa-user-plus"></i>`;
+            }
+        });
+
+    </script>
+</body>
+
+</html>
