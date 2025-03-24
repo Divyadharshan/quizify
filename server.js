@@ -195,7 +195,7 @@ app.get("/load", isLoggedIn, (req, res) => {
     res.render("load");
 })
 app.get("/editprofile", isLoggedIn,(req, res) => {
-    res.render("editprofile");
+    res.render("profile/editprofile");
 })
 app.put("/editprofile", isLoggedIn,upload.single("image"),async(req, res) => {
     try{
