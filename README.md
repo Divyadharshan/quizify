@@ -1,18 +1,22 @@
-# 🎯 Quizify  
+<h1><p align="center">🎯 Quizify</p></h1>
 
-A feature-rich quiz platform that allows users to take AI-generated quizzes or user-created quizzes, track progress via leaderboards, and enforce strict session management. 🚀
+Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and enjoy fair play with strict session management. Create, share, and challenge friends while following others to discover exciting new quizzes! 🎯🏆
 
 ## ✨ Features
+- 🔐 **User Authentication:** Users register via email, and the account is created after verification.
+- 📩 **Welcome Mail:** A welcome email is sent upon successful registration.
+- 🧠 **AI-Generated & User-Created Quizzes:** Users can take AI-generated quizzes or quizzes created by others using shared quiz codes.
+- ❌ **Quiz Attempt Rules:** Users cannot retake the Daily Quiz on the same day; only one attempt is allowed.
+- ✍️ **Quiz Creation & Sharing:** Users can create unlimited quizzes using AI or manual input and share quiz codes.
+- 🏆 **Leaderboard:** Daily and overall leaderboards track top performers.
+- 🔄 **Strict Session Management:** Switching tabs may result in automatic logout.
+- ⏰ **Scheduling:** Leaderboard updates automatically at **12:24 AM** every day.
+- 🔓 **Logout Feature:** Secure user logout functionality.
+- 👥 **Follow Feature:** Users can follow others to keep track of their daily quizzes and scores.
 
-- 🔐 **User Authentication**: Users can register and log in securely.
-- 📩 **Welcome Mail**: A welcome email is sent upon successful registration.
-- 🧠 **AI-Generated & User-Created Quizzes**: Users can take quizzes based on selected topics or custom quizzes shared via links.
-- ❌ **Quiz Attempt Rules**: Users cannot retake the same quiz on the same day.
-- ✍️ **Quiz Creation & Sharing**: Users can create an unlimited number of quizzes and share them via links.
-- 🏆 **Leaderboard**: Daily and overall leaderboards similar to SkillRack.
-- 🔄 **Strict Session Management**: Switching tabs may lead to automatic logout.
-- ⏰ **Scheduling**: Quizzes or features scheduled to run at 12:00 AM.
-- 🔓 **Logout Feature**: Secure user logout functionality.
+## 🚀 Live Demo
+- [https://quizify.azurewebsites.net/](https://quizify.azurewebsites.net/)
+
 
 ## ⚙️ Installation
 
@@ -34,14 +38,16 @@ A feature-rich quiz platform that allows users to take AI-generated quizzes or u
    ```
 
 ## 🛠 Technologies Used
-- 🎨 **Frontend**: HTML, CSS, JavaScript
-- 🏗 **Backend**: Node.js (Express)
-- 🗄 **Database**: MongoDB 
-- 🔑 **Authentication**: JWT / OAuth
-- 📧 **Email Service**: Nodemailer
-- ⏳ **Scheduling**: Nodecron
-- 🚀 **Deployment**: Microsoft Azure
+- 🎨 **Frontend:** HTML, CSS, JavaScript
+- ⚙️ **Backend:** Node.js (Express)
+- 🗄 **Database:** MongoDB
+- 🔑 **Authentication:** JWT / OAuth
+- 📧 **Email Service:** Nodemailer
+- ⏳ **Scheduling:** Nodecron
+- ☁️ **Image Storage:** Cloudinary
+- 🧠 **AI Integration:** DeepSeek API (via OpenRouter)
+- 🚀 **Deployment:** Microsoft Azure
 
 ## 🤝 Contributing
-Contributions are welcome! 🎉 Feel free to fork the repository and submit a pull request. 💡
-
+Contributions are welcome! 
+🎉 Feel free to fork the repository and submit a pull request. 💡

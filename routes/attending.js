@@ -37,6 +37,10 @@ router.post("/", isLoggedIn, async (req, res) => {
         }
 
         const user = await User.findById(req.user._id);
+        const userAttempt = quiz.userAttempts.find(attempt => attempt.user.toString() === req.user._id.toString());
+        if (userAttempt) {
+            return res.render("solved",{data:quiz,score:userAttempt.score,caption:"You have already attempted this Quiz!"});
+        }
         let score = 0;
         const userAnswers = req.body;
         quiz.questions.forEach((question, index) => {

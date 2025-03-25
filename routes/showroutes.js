@@ -2,9 +2,9 @@ const express = require("express")
 const router = express.Router();
 const User = require("../models/user");
 const Quiz = require("../models/quiz");
-const {isLoggedIn} = require("../middleware");
+const { isLoggedIn } = require("../middleware");
 
-router.get("/", isLoggedIn,async (req, res) => {
+router.get("/", isLoggedIn, async (req, res) => {
     const user = await User.findOne({ username: req.user.username });
     const ind = new Date().toLocaleDateString("en-GB", {
         timeZone: "Asia/Kolkata",
@@ -15,15 +15,15 @@ router.get("/", isLoggedIn,async (req, res) => {
     const data = await Quiz.findOne({ date: ind });
     const attemptexist = user.quizAttempts.find(attempt => attempt.date === ind);
     if (attemptexist) {
-        return res.render("solved",{data,score:attemptexist.score,caption:"You already completed today's quiz!"});
+        return res.render("solved", { data, score: attemptexist.score, caption: "You already completed today's quiz!" });
     }
-    if(!data){
+    if (!data) {
         return res.send("No Quiz Found");
     }
     res.render("dailyquiz/show", { data });
 });
 
-router.post("/",isLoggedIn,async (req, res) => {
+router.post("/", isLoggedIn, async (req, res) => {
     try {
         const ind = new Date().toLocaleDateString("en-GB", {
             timeZone: "Asia/Kolkata",
@@ -35,6 +35,10 @@ router.post("/",isLoggedIn,async (req, res) => {
         let score = 0;
         const useranswers = req.body;
         const user = await User.findOne({ username: req.user.username });
+        const attemptexist = user.quizAttempts.find(attempt => attempt.date === ind);
+        if (attemptexist) {
+            return res.render("solved", { data:quiz, score: attemptexist.score, caption: "You already completed today's quiz!" });
+        }
         quiz.questions.forEach((question, index) => {
             const useranswer = useranswers[`question_${index}`];
             if (useranswer && parseInt(useranswer) === question.correctoption) {
@@ -44,7 +48,8 @@ router.post("/",isLoggedIn,async (req, res) => {
         user.quizAttempts.push({ date: ind, score });
         user.totalScore += score;
         await user.save();
-        return res.render("solved",{data:quiz,score:score,caption:"You have successfully completed the quiz for today!"});
+        console.log("post req");
+        return res.render("solved", { data: quiz, score: score, caption: "You have successfully completed the quiz for today!" });
     }
     catch (e) {
         console.log(e);
@@ -52,4 +57,4 @@ router.post("/",isLoggedIn,async (req, res) => {
     }
 })
 
-module.exports=router;
+module.exports = router;
