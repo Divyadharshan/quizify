@@ -6,6 +6,7 @@ const leaderboardSchema = new mongoose.Schema({
       username: String,
       totalScore: Number,
       profilePicture: String,
+      quizAttempts:[{date:String,score:Number}],
       score: Number,
     },
   ],
