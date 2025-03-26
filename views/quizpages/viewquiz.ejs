@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
             color: white;
             text-align: center;
         }
+
         .quiz-container {
             background: #16171A;
             padding: 20px;
@@ -21,6 +23,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
         }
+
         .question {
             background: #7B16FF;
             padding: 10px;
@@ -28,19 +31,23 @@
             margin-bottom: 10px;
             text-align: left;
         }
+
         .option-container {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         input[type="radio"] {
             width: 16px;
             height: 16px;
         }
+
         .correct {
             color: rgb(7, 243, 7);
             font-weight: bold;
         }
+
         button {
             width: 30%;
             margin-top: 1rem;
@@ -54,40 +61,109 @@
             cursor: pointer;
             transition: background 0.3s, transform 0.3s;
         }
+
         button:hover {
             background: #cc0000;
             transform: scale(1.05);
         }
+
+        .attendance-container {
+            margin-top: 30px;
+            background: #2C2C2C;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .attendance-container h3 {
+            color: #7B16FF;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #444;
+            color: #A3AFBF;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #7B16FF;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #3a3a3a;
+        }
     </style>
 </head>
-<body>
-    <% quizzes.forEach((quiz, quizIndex) => { %>
-        <div class="quiz-container">
-            <h2>Room Code: <%= quiz.number%></h2>
-            <h3>Topic: <%= quiz.topic %></h3>
 
-            <% quiz.questions.forEach((q, qIndex) => { %>
+<body>
+    <% quizzes.forEach((quiz, quizIndex)=> { %>
+        <div class="quiz-container">
+            <h2>Room Code: <%= quiz.number%>
+            </h2>
+            <h3>Topic: <%= quiz.topic %>
+            </h3>
+
+            <% quiz.questions.forEach((q, qIndex)=> { %>
                 <div class="question">
-                    <h3><%= qIndex + 1 %>. <%= q.question %></h3>
-                    
-                    <% q.options.forEach((option, optIndex) => { %>
+                    <h3>
+                        <%= qIndex + 1 %>. <%= q.question %>
+                    </h3>
+
+                    <% q.options.forEach((option, optIndex)=> { %>
                         <div class="option-container">
-                            <input type="radio" name="question-<%= quizIndex %>-<%= qIndex %>" value="<%= optIndex %>" 
-                                   <%= optIndex === q.correctoption ? "checked" : "" %> disabled>
+                            <input type="radio" name="question-<%= quizIndex %>-<%= qIndex %>" value="<%= optIndex %>"
+                                <%=optIndex===q.correctoption ? "checked" : "" %> disabled>
                             <label class="<%= optIndex === q.correctoption ? 'correct' : '' %>">
                                 <%= option %>
                             </label>
                         </div>
-                    <% }); %>
+                        <% }); %>
                 </div>
-            <% }); %>
+                <% }); %>
 
-            <!-- Delete Button -->
-            <form action="/viewquiz/<%= quiz._id %>?_method=DELETE" method="POST">
-                <button>Delete Quiz</button>
-            </form>
+                    <!-- Delete Button -->
+                    <form action="/viewquiz/<%= quiz._id %>?_method=DELETE" method="POST">
+                        <button>Delete Quiz</button>
+                    </form>
+                    <br>
+                    <div class="attendance-container">
+                        <h3>Users Attended and Their Scores</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <% for(let i=0; i<usernames.length; i++){ %>
+                            <tbody>
+                                <tr>
+                                    <td><%=usernames[i]%></td>
+                                    <td><%=scores[i]%></td>
+                                </tr>
+                            </tbody>
+                            <% } %>
+                        </table>
+                    </div>
 
         </div>
-    <% }); %>
+        <% }); %>
 </body>
+
 </html>

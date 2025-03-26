@@ -202,7 +202,13 @@ router.get("/viewquizzes/:id",async(req,res)=>{
 })
 router.get("/viewquiz/:id",async(req,res)=>{
     const Quiz = await UserQuiz.find({_id:req.params.id});
-    res.render("quizpages/viewquiz",{quizzes:Quiz})
+    const usernames = [],scores=[];
+    for(const a of Quiz[0].userAttempts){
+        scores.push(a.score);
+        const us = await User.findById(a.user);
+        usernames.push(us.username);
+    }
+    res.render("quizpages/viewquiz",{quizzes:Quiz,usernames,scores})
 })
 router.delete("/viewquiz/:id",async(req,res)=>{
     await UserQuiz.deleteOne({_id:req.params.id});
