@@ -41,6 +41,9 @@ cron.schedule("24 0 * * *",async()=>{
     scheduled:true,
     timezone:"Asia/Kolkata"
 });
+if (cachedailyleaderboard.length===0 || cacheleaderboard===0){
+    updateleaderboard();
+}
 module.exports={
     dailyleaderboard:()=>cachedailyleaderboard,
     leaderboard:()=>cacheleaderboard
