@@ -36,7 +36,7 @@
                                 <img class="profile-pic" src="<%= dataa.profilePicture %>" alt="Profile Picture">
                                 <a href="/profile/<%=dataa.username%>" style="text-decoration: none;color: #7B16FF"><%= dataa.username %></a>
                             </td>
-                            <td><%= dataa.quizAttempts.score %></td>
+                            <td><%=dataa.quizAttempts[0].score%></td>
                         </tr>
                     <% }) %>
                 </tbody>
