@@ -104,10 +104,54 @@
         .ds-info div {
             text-align: center;
         }
-    </style>
+    .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--surface);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+
+        .navbar h2 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .navbar a {
+            color: var(--white);
+            text-decoration: none;
+            margin-left: 1rem;
+            transition: color 0.3s;
+        }
+
+        .navbar a:hover {
+            color: var(--primary);
+        }
+        </style>
+
 </head>
 
 <body>
+    <div class="navbar">
+        <h2>QUIZIFY</h2>
+        <% if(currentUser){ %>
+        <div>
+            <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+        <% } else { %>
+        <div>
+            <a href="/login"><i class="fa fa-sign-in"></i> Login</a>
+            <a href="/register"><i class="fa fa-user-plus"></i> Register</a>
+        </div>
+        <% } %>
+    </div>
     <div class="card">
         <div class="avatar-holder">
             <img src="<%=user.profilePicture%>" alt="Profile Picture">

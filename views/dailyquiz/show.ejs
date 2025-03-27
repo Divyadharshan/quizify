@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Quizify - DQ</title>
 
     <style>
@@ -19,6 +20,7 @@
             --color: var(--white);
             --surface: var(--darker);
         }
+
         body {
             background: var(--bg);
             color: var(--color);
@@ -29,6 +31,7 @@
             min-height: 80vh;
             margin: 0;
         }
+
         .navbar {
             background: var(--surface);
             width: 95%;
@@ -54,6 +57,7 @@
         .navbar a:hover {
             color: var(--primary);
         }
+
         .quiz-container {
             background: var(--surface);
             padding: 2rem;
@@ -68,10 +72,12 @@
             text-align: center;
             color: var(--white);
         }
+
         .quiz-wrapper {
             display: flex;
             align-items: flex-start;
         }
+
         .sidebar {
             width: 50px;
             display: flex;
@@ -106,6 +112,7 @@
             display: block;
             margin-bottom: 10px;
         }
+
         ul {
             list-style: none;
             padding: 0;
@@ -129,9 +136,10 @@
         input[type="radio"] {
             margin-right: 10px;
         }
-        #submit-btn {
-            display: none;
-            width: 100%;
+
+        #submit-btn,
+        .nav-btn {
+            width: 30%;
             padding: 10px;
             margin-top: 1rem;
             font-size: 1rem;
@@ -144,18 +152,29 @@
             transition: background 0.3s, transform 0.3s;
         }
 
-        #submit-btn:hover {
+        #submit-btn:hover,
+        .nav-btn:hover {
             background: var(--primary-trans);
         }
 
-        #submit-btn:active {
+        #submit-btn:active,
+        .nav-btn:active {
             transform: scale(0.95);
         }
-        .hidden{
+
+        .hidden {
             display: none;
         }
-        .visible{
+
+        .visible {
             display: block;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -186,10 +205,10 @@
 <body>
 
     <div class="navbar">
-        <h2>Quizify</h2>
+        <h2>QUIZIFY</h2>
         <div>
-            <a href="/">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
 
@@ -197,31 +216,46 @@
         <h1>Daily Quiz</h1>
         <div class="quiz-wrapper">
             <div class="sidebar">
-                <% data.questions.forEach((question, index) => { %>
-                    <button data-index="<%= index %>"><%= index + 1 %></button>
-                <% }) %>
+                <% data.questions.forEach((question, index)=> { %>
+                    <button data-index="<%= index %>">
+                        <%= index + 1 %>
+                    </button>
+                    <% }) %>
             </div>
 
             <div class="question-container">
                 <form action="/show" method="POST">
-                    <% data.questions.forEach((question, index) => { %>
+                    <% data.questions.forEach((question, index)=> { %>
                         <div id="question_<%= index %>" class="<%= index === 0 ? 'visible' : 'hidden' %>">
-                            <strong><%= question.question %></strong>
+                            <strong>
+                                <%= question.question %>
+                            </strong>
                             <ul>
-                                <% question.options.forEach((option, i) => { %>
+                                <% question.options.forEach((option, i)=> { %>
                                     <li>
                                         <label>
                                             <input type="radio" name="question_<%= index %>" value="<%= i %>">
                                             <%= option %>
                                         </label>
                                     </li>
-                                <% }) %>
+                                    <% }) %>
                             </ul>
+
+                            <div class="nav-buttons">
+                                <button type="button" class="nav-btn prev-btn hidden" data-index="<%= index %>">
+                                    <i class="fa fa-chevron-left"></i> Prev
+                                </button>
+                                <button type="button" class="nav-btn next-btn hidden" data-index="<%= index %>">
+                                    Next <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </div>
                         </div>
-                    <% }) %>
-                    <center>
-                    <button type="submit" id="submit-btn" style="width:40%">Submit</button>
-                    </center>
+                        <% }) %>
+                            <center>
+                                <button type="submit" id="submit-btn" style="display: none;">
+                                    <i class="fa fa-paper-plane"></i> Submit
+                                </button>
+                            </center>
                 </form>
             </div>
         </div>
@@ -229,18 +263,33 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const questionButtons = document.querySelectorAll("button[data-index]");
             const questions = document.querySelectorAll("div[id^='question_']");
-            const submitButton = document.getElementById("submit-btn");
+            const questionButtons = document.querySelectorAll("button[data-index]");
+            let currentIndex = 0;
 
+            function showQuestion(index) {
+                currentIndex = index;
+                questions.forEach((q, i) => {
+                    q.style.display = i === index ? "block" : "none";
+                });
+
+                document.querySelectorAll(".prev-btn").forEach(btn => btn.classList.add("hidden"));
+                document.querySelectorAll(".next-btn").forEach(btn => btn.classList.add("hidden"));
+
+                if (index > 0) document.querySelector(`#question_${index} .prev-btn`).classList.remove("hidden");
+                if (index < questions.length - 1) document.querySelector(`#question_${index} .next-btn`).classList.remove("hidden");
+                document.getElementById("submit-btn").style.display = (index === questions.length - 1) ? "block" : "none";
+            }
             questionButtons.forEach(button => {
                 button.addEventListener("click", function () {
-                    const index = this.getAttribute("data-index");
-                    questions.forEach(q => q.style.display = "none");
-                    document.getElementById(`question_${index}`).style.display = "block";
-                    submitButton.style.display = (index == questions.length - 1) ? "block" : "none";
+                    const index = parseInt(this.getAttribute("data-index"));
+                    showQuestion(index);
                 });
             });
+            document.querySelectorAll(".prev-btn").forEach(btn => btn.addEventListener("click", () => showQuestion(currentIndex - 1)));
+            document.querySelectorAll(".next-btn").forEach(btn => btn.addEventListener("click", () => showQuestion(currentIndex + 1)));
+
+            showQuestion(0);
         });
         /*
         document.addEventListener("visibilitychange", () => {
@@ -255,6 +304,7 @@
             }
         });*/
     </script>
+
 
 </body>
 
