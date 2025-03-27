@@ -4,10 +4,14 @@ const Leaderboard = require("./models/leaderboard");
 
 let cacheleaderboard=[];
 let cachedailyleaderboard=[];
+let leaderboard=[];
+let dailyleaderboard=[];
 
 async function updateleaderboard(){
-    cacheleaderboard = await User.find({}, { username: 1, totalScore: 1, profilePicture: 1 }).sort({ totalScore: -1, username :-1 });
-    await Leaderboard.findOneAndUpdate({type:"overall"},{data:cacheleaderboard},{upsert:true,new:true});
+    leaderboard = await User.find({}, { username: 1, totalScore: 1, profilePicture: 1 }).sort({ totalScore: -1, username :-1 });
+    await Leaderboard.findOneAndUpdate({type:"overall"},{data:leaderboard},{upsert:true,new:true});
+    const overall=await Leaderboard.findOne({type:"overall"});
+    cacheleaderboard=overall?overall.data:[];
 
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -17,8 +21,7 @@ async function updateleaderboard(){
             month: "2-digit", 
             day: "2-digit"
     }).split('/').reverse().join('-');
-
-    cachedailyleaderboard = await User.aggregate([
+    dailyleaderboard = await User.aggregate([
     { 
         $match:{"quizAttempts.date":ind}
     },
@@ -37,9 +40,11 @@ async function updateleaderboard(){
     ]);
     await Leaderboard.findOneAndUpdate(
         { type: "daily" },
-        { data: cachedailyleaderboard},
+        { data: dailyleaderboard},
         { upsert: true, new: true }
     );
+    const daily=await Leaderboard.findOne({type:"daily"});
+    cachedailyleaderboard=daily?daily.data:[];
 }
 cron.schedule("24 0 * * *",async()=>{
     await updateleaderboard();

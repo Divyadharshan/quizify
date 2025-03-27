@@ -65,26 +65,6 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 1
     }
 }
-/*
-const newQuiz = new Quiz({
-    date : "2025-03-20",
-    questions : [
-        {
-            id:1,
-            question : "Who developed C?",
-            options : ["Dennis Ritchie","Bjarne Straustoup","Guido Van Rossum","Charles Babbage"],
-            correctoption : 0,
-        },
-        {
-            id:2,
-            question : "Who developed Python?",
-            options : ["Dennis Ritchie","Bjarne Straustoup","Guido Van Rossum","Charles Babbage"],
-            correctoption : 2,
-        },
-    ]
-});
-
-newQuiz.save();*/
 
 app.use(session(sessionConfig));
 app.use(flash());
@@ -211,7 +191,7 @@ app.put("/editprofile", isLoggedIn,upload.single("image"),async(req, res) => {
             if (err) {
                 return res.redirect("/editprofile");
             }
-            return res.redirect(`/profile/${user.username}`);
+            return res.redirect(`/`);
         });
     }
     catch(e){
