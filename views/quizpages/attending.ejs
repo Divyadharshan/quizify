@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <title>ATTENDING QUIZ</title>
+    <link rel="shortcut icon" href="/logo.png" type="image/x-icon">
+    <title><%=data.topic%> by <%=author%></title>
 
     <style>
         :root {
@@ -70,6 +71,7 @@
 
         h1,
         h2,
+        h3,
         h4 {
             text-align: center;
             color: var(--white);
@@ -215,10 +217,10 @@
     </div>
 
     <div class="quiz-container">
-        <h1>Quiz on <%=data.topic%>
+        <h1><%=data.topic%>
         </h1>
-        <h2>Code : <%=data.number%>
-        </h2>
+        <h3>Code : <%=data.number%>
+        </h3>
         <h4>Created by <%=author%>
         </h4>
         <div class="quiz-wrapper">
