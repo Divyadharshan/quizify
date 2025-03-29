@@ -5,16 +5,25 @@ const User = require("../models/user");
 router.get("/:username", async (req, res) => {
     const { username } = req.params;
     const user = await User.findOne({ username: username });
+    var usernames=[]
+    var pictures=[]
+    if (user){
+        for(const u of user.followers){
+            const us = await User.findById(u);
+            usernames.push(us.username);
+            pictures.push(us.profilePicture);
+        }
+    }
     if (user) {
         //counting users with greater score
         const hscores = await User.countDocuments({ totalScore: { "$gt": user.totalScore } });
         const rank = hscores + 1;
         if (!req.isAuthenticated()) {
-            res.render("profile/profile", { user, rank, check: false });
+            res.render("profile/profile", { user, rank, check: false, usernames,pictures});
         }
         else {
             const check = await user.followers.includes(req.user._id);
-            res.render("profile/profile", { user, rank, check: check });
+            res.render("profile/profile", { user, rank, check: check, usernames,pictures});
         }
     }
     else {

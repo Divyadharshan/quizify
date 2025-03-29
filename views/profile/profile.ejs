@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USER PROFILE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" href="/logo.png" type="image/x-icon">
+    <title>
+        <%=user.username%> - Quizify Profile
+    </title>
     <style>
         :root {
             --black: #000000;
@@ -104,18 +107,19 @@
         .ds-info div {
             text-align: center;
         }
-    .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: var(--surface);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-}
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--surface);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
 
 
         .navbar h2 {
@@ -133,7 +137,71 @@
         .navbar a:hover {
             color: var(--primary);
         }
-        </style>
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--white);
+        }
+
+        .followers-list {
+            max-height: 200px;
+            overflow-y: auto;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .follower-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .follower-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .follower-item a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
 
 </head>
 
@@ -141,89 +209,117 @@
     <div class="navbar">
         <h2>QUIZIFY</h2>
         <% if(currentUser){ %>
-        <div>
-            <a href="/"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-        </div>
-        <% } else { %>
-        <div>
-            <a href="/login"><i class="fa fa-sign-in"></i> Login</a>
-            <a href="/register"><i class="fa fa-user-plus"></i> Register</a>
-        </div>
-        <% } %>
+            <div>
+                <a href="/"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+            <% } else { %>
+                <div>
+                    <a href="/login"><i class="fa fa-sign-in"></i> Login</a>
+                    <a href="/register"><i class="fa fa-user-plus"></i> Register</a>
+                </div>
+                <% } %>
     </div>
     <div class="card">
         <div class="avatar-holder">
             <img src="<%=user.profilePicture%>" alt="Profile Picture">
         </div>
         <div class="name">
-            <a href="#">
-                <%=user.username%>
-            </a>
-            <br><br>
-            <p><i class="fas fa-users"></i> <span class="followers" id="followers">
-                    <%=user.followers.length%>
-                        <%=user.followers.length===1 ? " Follower" : " Followers" %>
-                </span></p>
+            <%=user.username%>
+                <br><br>
+                <p><a href="#" id="openfollowers"><i class="fas fa-users"></i> <span class="followers" id="followers">
+                            <%=user.followers.length%>
+                                <%=user.followers.length===1 ? " Follower" : " Followers" %>
+                    </a>
+                    </span></p>
         </div>
         <% if(currentUser){ %>
             <% if(currentUser.username!=user.username){ %>
                 <div class="button">
                     <% if (check===false){%>
                         <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
-                    <%} else{ %>
-                        <button class="btn" id="fbutton">Following <i class="fas fa-user-check"></i></button>
-                    <% } %>
+                        <%} else{ %>
+                            <button class="btn" id="fbutton">Following <i class="fas fa-user-check"></i></button>
+                            <% } %>
                 </div>
-            <% } else {%>
-                  <a href="/editprofile">
-                  <button class="btn">Edit Profile <i class="fas fa-user-edit"></i></button>
-                  </a>
-             <% } %>
-        <% } else { %>
-              <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
-        <% } %>
-                        <br>
-                        <div class="ds-info">
-                            <div>
-                                <h4>Rank</h4>
-                                <p>
-                                    <%=rank%>
-                                </p>
-                            </div>
-                            <div>
-                                <h4>Score</h4>
-                                <p>
-                                    <%=user.totalScore%>
-                                </p>
-                            </div>
-                            <div>
-                                <h4>DQ</h4>
-                                <p>
-                                    <%=user.quizAttempts.length%>
-                                </p>
-                            </div>
-                        </div>
+                <% } else {%>
+                    <a href="/editprofile">
+                        <button class="btn">Edit Profile <i class="fas fa-user-edit"></i></button>
+                    </a>
+                    <% } %>
+                        <% } else { %>
+                            <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
+                            <% } %>
+                                <br>
+                                <div class="ds-info">
+                                    <div>
+                                        <h4>Rank</h4>
+                                        <p>
+                                            <%=rank%>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4>Score</h4>
+                                        <p>
+                                            <%=user.totalScore%>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4>DQ</h4>
+                                        <p>
+                                            <%=user.quizAttempts.length%>
+                                        </p>
+                                    </div>
+                                </div>
+    </div>
+    <!--Followers List-->
+    <div class="modal" id="followersModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Followers</h3>
+                <span class="close" id="closefollowers">&times;</span>
+            </div>
+            <div class="followers-list">
+                <% for(let i=0; i<usernames.length; i++){%>
+                    <div class="follower-item">
+                        <img src="<%=pictures[i]%>" alt="ProfilePic">
+                        <a href="/profile/<%=usernames[i]%>">
+                            <%=usernames[i]%>
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.getElementById("fbutton").addEventListener("click", async function () {
-            const response = await fetch("/follow/<%=user._id%>", { method: "POST" });
-            const data = await response.json();
-            if (data.followers === 1) {
-                document.getElementById("followers").innerHTML = data.followers + " Follower";
-                //console.log("hello from one");
-            }
-            else {
-                document.getElementById("followers").innerHTML = data.followers + " Followers";
-                //console.log("hello from two");
-            }
-            if (data.check === true) {
-                document.getElementById("fbutton").innerHTML = `Following <i class="fas fa-user-check"></i>`;
-            }
-            else {
-                document.getElementById("fbutton").innerHTML = `Follow <i class="fas fa-user-plus"></i>`;
-            }
+        const fbutton = document.getElementById("fbutton");
+        if (fbutton) {
+            document.getElementById("fbutton").addEventListener("click", async function () {
+                const response = await fetch("/follow/<%=user._id%>", { method: "POST" });
+                const data = await response.json();
+                if (data.followers === 1) {
+                    document.getElementById("followers").innerHTML = data.followers + " Follower";
+                    //console.log("hello from one");
+                }
+                else {
+                    document.getElementById("followers").innerHTML = data.followers + " Followers";
+                    //console.log("hello from two");
+                }
+                if (data.check === true) {
+                    document.getElementById("fbutton").innerHTML = `Following <i class="fas fa-user-check"></i>`;
+                }
+                else {
+                    document.getElementById("fbutton").innerHTML = `Follow <i class="fas fa-user-plus"></i>`;
+                }
+            });
+        }
+        document.getElementById("openfollowers").addEventListener("click", function () {
+            document.getElementById("followersModal").style.display = "flex";
+        });
+
+        document.getElementById("closefollowers").addEventListener("click", function () {
+            document.getElementById("followersModal").style.display = "none";
         });
 
     </script>

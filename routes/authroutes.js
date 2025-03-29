@@ -196,11 +196,11 @@ router.get("/setpwd", isAuth,(req, res) => {
     res.render("auth/setpwd");
 })
 
-router.get("/viewquizzes/:id",async(req,res)=>{
+router.get("/viewquizzes/:id",isLoggedIn,async(req,res)=>{
     const Quiz = await UserQuiz.find({author:req.params.id});
     res.render("quizpages/viewquizzes",{quizzes:Quiz})
 })
-router.get("/viewquiz/:id",async(req,res)=>{
+router.get("/viewquiz/:id",isLoggedIn,async(req,res)=>{
     const Quiz = await UserQuiz.find({_id:req.params.id});
     const usernames = [],scores=[];
     for(const a of Quiz[0].userAttempts){
@@ -210,7 +210,7 @@ router.get("/viewquiz/:id",async(req,res)=>{
     }
     res.render("quizpages/viewquiz",{quizzes:Quiz,usernames,scores})
 })
-router.delete("/viewquiz/:id",async(req,res)=>{
+router.delete("/viewquiz/:id",isLoggedIn,async(req,res)=>{
     await UserQuiz.deleteOne({_id:req.params.id});
     return res.redirect(`/viewquizzes/${req.user._id}`);
 })
