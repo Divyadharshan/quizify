@@ -83,8 +83,9 @@
             width: 50px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding-right: 1rem;
+            align-items: center; 
+            max-height: 250px;
+            overflow-y: auto; 
         }
 
         .sidebar button {
@@ -92,7 +93,7 @@
             color: var(--white);
             border: none;
             padding: 5px;
-            width: 40px;
+            width: 36px;
             margin-bottom: 5px;
             border-radius: 5px;
             cursor: pointer;
@@ -106,6 +107,7 @@
 
         .question-container {
             flex: 1;
+            padding-left: 24px;
         }
 
         .question-container strong {
@@ -188,6 +190,8 @@
                 width: 100%;
                 text-align: center;
                 padding-bottom: 1rem;
+                max-height: 150px;
+                overflow-y: auto;
             }
 
             .sidebar button {
@@ -292,20 +296,7 @@
 
             showQuestion(0);
         });
-        /*
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                fetch('/logout', { method: 'POST', credentials: 'include' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.href = "/login";
-                        }
-                    });
-            }
-        });*/
     </script>
-
 
 </body>
 
