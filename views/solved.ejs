@@ -43,7 +43,10 @@
         }
     
         // Run confetti when the page loads
-        window.onload = launchConfetti;
+        // Displays only if the score is 50% of the total score
+        if (`<%=score%>`/`<%=data.questions.length%>`>=0.5){
+            window.onload = launchConfetti;
+        }
     </script>
     
     
