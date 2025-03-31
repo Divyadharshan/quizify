@@ -51,7 +51,7 @@ The Quizify Team 🌟`
                 return res.redirect("/register");
             }
             else {
-                req.flash("success", "Verification link has been sent to your mail");
+                req.flash("success", "Verification link has been sent to your mail. Check Spam folder too");
                 return res.redirect("/login");
             }
         })
@@ -130,6 +130,33 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
         req.session.destroy(() => res.redirect("/login"));
     })
 })
+
+router.post('/logout',async(req,res)=>{
+    const user = await User.findById(req.user._id);
+    const ind = new Date().toLocaleDateString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+    }).split("/").reverse().join("-");
+    
+    const attempt=user.logoutAttempts.find(a=>a.date===ind);
+    if(attempt){
+        attempt.times+=1;
+        console.log("check2");
+    }
+    else{
+        user.logoutAttempts.push({date:ind,times:1});
+        console.log("check1");
+    }
+    await user.save();
+    req.session.destroy((err)=>{
+        if(err){
+            return res.status(500).json({success:false, message:'Logout failed'});
+        }
+        return res.status(200).json({success:true});
+    });
+});
 
 router.get("/changepwd", isAuth, (req, res) => {
     res.render("auth/changepwd");

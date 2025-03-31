@@ -83,9 +83,9 @@
             width: 50px;
             display: flex;
             flex-direction: column;
-            align-items: center; 
+            align-items: center;
             max-height: 250px;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
         .sidebar button {
@@ -212,8 +212,8 @@
     <div class="navbar">
         <h2>QUIZIFY</h2>
         <div>
-            <a href="/"><i class="fa-solid fa-house"></i> Home</a>
-            <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            <a id="home" href="/"><i class="fa-solid fa-house"></i> Home</a>
+            <a id="logout" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
 
@@ -293,8 +293,35 @@
             });
             document.querySelectorAll(".prev-btn").forEach(btn => btn.addEventListener("click", () => showQuestion(currentIndex - 1)));
             document.querySelectorAll(".next-btn").forEach(btn => btn.addEventListener("click", () => showQuestion(currentIndex + 1)));
-
             showQuestion(0);
+
+            let navigate = false;
+            let tabswitch = false;
+            document.getElementById('home').addEventListener('click',()=>{
+                navigate=true;
+                tabswitch=false;
+            });
+            document.getElementById('logout').addEventListener('click',()=>{
+                navigate=true;
+                tabswitch=false;
+            });
+            window.addEventListener("visibilitychange",()=>{
+                if (document.hidden && !navigate) {
+                    tabswitch=true;
+                }
+            });
+            window.addEventListener("focus", () => {
+                if (tabswitch && !navigate) {
+                    fetch('/logout', { method:'POST',credentials:'include' })
+                        .then(response=>response.json())
+                        .then(data=>{
+                            if (data.success) {
+                                window.location.href="/login";
+                            }
+                        });
+                }
+                tabswitch=false;
+            });
         });
     </script>
 

@@ -5,11 +5,9 @@ const passportlocalmongoose = require("passport-local-mongoose");
 const userschema = new Schema({
     username : {type:String, unique:true, required:true},
     email:{type:String,unique:true},
+    logoutAttempts:[{date:String,times:Number}],
     quizAttempts:[{date:String,score:Number}],
-    totalScore:{
-        type:Number,
-        default:0
-    },
+    totalScore:{type:Number,default:0},
     profilePicture:{
         type:String,
         default : "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png"
