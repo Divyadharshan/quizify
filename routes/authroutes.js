@@ -191,7 +191,7 @@ The Quizify Team 🌟`
             return res.redirect("/changepwd")
 
         } else {
-            req.flash("success", 'Password reset link has been sent to your mail')
+            req.flash("success", 'Your Username & Password reset link has been sent to your mail')
             return res.redirect("/changepwd")
         }
     });
