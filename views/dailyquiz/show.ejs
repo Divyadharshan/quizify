@@ -233,7 +233,7 @@
                     <% data.questions.forEach((question, index)=> { %>
                         <div id="question_<%= index %>" class="<%= index === 0 ? 'visible' : 'hidden' %>">
                             <strong>
-                            <%=index+1%>. <%= question.question %>
+                            <%=index+1%>. <%- question.question.replace(/\n/g, '<br>') %>
                             </strong>
                             <ul>
                                 <% question.options.forEach((option, i)=> { %>
