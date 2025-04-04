@@ -242,4 +242,7 @@ router.delete("/viewquiz/:id",isLoggedIn,async(req,res)=>{
     return res.redirect(`/viewquizzes/${req.user._id}`);
 })
 
+router.get("/warning",(req,res)=>{
+    res.render("auth/warning");
+})
 module.exports = router;
