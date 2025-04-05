@@ -7,7 +7,9 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - 📩 **Welcome Mail:** A welcome email is sent upon successful registration.
 - 🧠 **AI-Generated & User-Created Quizzes:** Users can take AI-generated quizzes or quizzes created by others using shared quiz codes.
 - ❌ **Quiz Attempt Rules:** Users cannot retake the Daily Quiz on the same day; only one attempt is allowed.
-- 🔄 **Strict Session Management:** Switching tabs more than three times while attending Daily Quiz will end the quiz attempt, and the score will be set to 0.
+- 🔄 **Strict Session Management Policy:**
+  - **Daily Quiz (DQ):** Switching tabs more than 3 times will immediately end the quiz attempt and set the score to 0.
+  - **User-Created Quizzes:** If the user switches tabs more than 2 times, the attempt will be marked as cheated. The score (regardless of correctness) will be shown to the quiz creator with a cheating flag.
 - ✍️ **Quiz Creation & Sharing:** Users can create unlimited quizzes using AI or manual input and share quiz codes.
 - 🏆 **Leaderboard:** Daily and overall leaderboards track top performers.
 - ⏰ **Scheduling:** Leaderboard updates automatically at **12:24 AM** every day.

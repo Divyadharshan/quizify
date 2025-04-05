@@ -13,7 +13,15 @@ router.get("/", isLoggedIn, async (req, res) => {
         if (!quiz) {
             return res.redirect("/notfound")
         }
-        const userAttempt = quiz.userAttempts.find(attempt => attempt.user.toString() === req.user._id.toString());
+        const attempt=quiz.logoutAttempts.find(a=>a.user && a.user.toString()===req.user._id.toString());
+        if(attempt){
+            if(attempt.times===3){
+                quiz.userAttempts.push({user:req.user._id,score:0})
+                await quiz.save();
+                return res.render("solved", { data:quiz, score: 0, caption: "You cannot attempt this quiz because you have exceeded the tab-switch limit" })
+            }
+        }
+        const userAttempt = quiz.userAttempts.find(attempt => attempt.user && attempt.user.toString() === req.user._id.toString());
         if (userAttempt) {
             return res.render("solved",{data:quiz,score:userAttempt.score,caption:"You have already attempted this Quiz!"});
         }
@@ -37,7 +45,7 @@ router.post("/", isLoggedIn, async (req, res) => {
         }
 
         const user = await User.findById(req.user._id);
-        const userAttempt = quiz.userAttempts.find(attempt => attempt.user.toString() === req.user._id.toString());
+        const userAttempt = quiz.userAttempts.find(attempt => attempt.user && attempt.user.toString() === req.user._id.toString());
         if (userAttempt) {
             return res.render("solved",{data:quiz,score:userAttempt.score,caption:"You have already attempted this Quiz!"});
         }
