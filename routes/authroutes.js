@@ -1,8 +1,9 @@
 const express = require("express")
 const router = express.Router();
+const app = express();
 const User = require("../models/user");
 const UserQuiz = require("../models/userquiz");
-const { isLoggedIn, isAuth } = require("../middleware");
+const { isLoggedIn, isAuth} = require("../middleware");
 const { transporter } = require("../mailconfig");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -149,10 +150,32 @@ router.post('/logout',async(req,res)=>{
         user.logoutAttempts.push({date:ind,times:1});
         console.log("check1");
     }
+    app.locals.tabswitch = true;
     await user.save();
     req.session.destroy((err)=>{
         if(err){
-            return res.status(500).json({success:false, message:'Logout failed'});
+            return res.status(500).json({success:false});
+        }
+        return res.status(200).json({success:true});
+    });
+});
+
+router.post('/quizlogout',async(req,res)=>{
+    const quiz = await UserQuiz.findOne({number:req.body.number});
+    const attempt=quiz.logoutAttempts.find(a=>a.user.toString()===req.user._id.toString());
+    if(attempt){
+        attempt.times+=1;
+        console.log("check2");
+    }
+    else{
+        quiz.logoutAttempts.push({user:req.user._id,times:1});
+        console.log("check1");
+    }
+    app.locals.tabswitch = true;
+    await quiz.save();
+    req.session.destroy((err)=>{
+        if(err){
+            return res.status(500).json({success:false});
         }
         return res.status(200).json({success:true});
     });
@@ -229,13 +252,20 @@ router.get("/viewquizzes/:id",isLoggedIn,async(req,res)=>{
 })
 router.get("/viewquiz/:id",isLoggedIn,async(req,res)=>{
     const Quiz = await UserQuiz.find({_id:req.params.id});
-    const usernames = [],scores=[];
+    const usernames = [],scores=[],logouts=[];
     for(const a of Quiz[0].userAttempts){
         scores.push(a.score);
+        const la = Quiz[0].logoutAttempts.find(k=>k.user && k.user.toString()===a.user.toString());
+        if(la){
+            logouts.push(la.times);
+        }
+        else{
+            logouts.push(0);
+        }
         const us = await User.findById(a.user);
         usernames.push(us.username);
     }
-    res.render("quizpages/viewquiz",{quizzes:Quiz,usernames,scores})
+    res.render("quizpages/viewquiz",{quizzes:Quiz,usernames,scores,logouts})
 })
 router.delete("/viewquiz/:id",isLoggedIn,async(req,res)=>{
     await UserQuiz.deleteOne({_id:req.params.id});
@@ -243,6 +273,11 @@ router.delete("/viewquiz/:id",isLoggedIn,async(req,res)=>{
 })
 
 router.get("/warning",(req,res)=>{
-    res.render("auth/warning");
+    if(app.locals.tabswitch===true){
+          app.locals.tabswitch=false;
+          return res.render("auth/warning");}
+    else{
+          return res.redirect("/");
+    }
 })
 module.exports = router;

@@ -190,6 +190,7 @@
                     <br>
                     <div class="attendance-container">
                         <h3>Users Attended and Their Scores</h3>
+                        <h5 style="color:red;">* RED COLOR INDICATES CHEATING</h5>
                         <table>
                             <thead>
                                 <tr>
@@ -199,10 +200,17 @@
                             </thead>
                             <% for(let i=0; i<usernames.length; i++){ %>
                             <tbody>
+                            <% if(logouts[i]>=2){ %>
+                                <tr style="background-color:rgb(209, 43, 43);">
+                                    <td><%=usernames[i]%></td>
+                                    <td><%=scores[i]%></td>
+                                </tr>
+                            <% } else { %>
                                 <tr>
                                     <td><%=usernames[i]%></td>
                                     <td><%=scores[i]%></td>
                                 </tr>
+                            <% } %>
                             </tbody>
                             <% } %>
                         </table>

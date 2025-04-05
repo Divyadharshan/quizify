@@ -16,8 +16,12 @@ const userQuizSchema = new Schema({
         correctoption: Number
     }],
      userAttempts: [{
-        user: { type: Schema.Types.ObjectId, ref: "User" },
+        user: {type: Schema.Types.ObjectId, ref: "User"},
         score: Number,
+    }],
+    logoutAttempts: [{
+        user:{type: Schema.Types.ObjectId, ref: "User"},
+        times:Number
     }],
     topic : {type:String}
 });
