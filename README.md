@@ -3,6 +3,7 @@
 Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and enjoy fair play with strict session management. Create, share, and challenge friends while following others to discover exciting new quizzes! 🎯🏆
 
 ## ✨ Features
+- 📲 **Progressive Web App (PWA):** Users can install the app to their device with a custom install prompt for a native app-like experience.
 - 🔐 **User Authentication:** Users register via email, and accounts are created after verification.
 - 📩 **Welcome Mail:** A welcome email is sent upon successful registration.
 - 🧠 **AI-Generated & User-Created Quizzes:** Users can take AI-generated quizzes or quizzes created by others using shared quiz codes.
