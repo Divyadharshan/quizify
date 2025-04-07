@@ -16,8 +16,7 @@ router.get("/:username", async (req, res) => {
     }
     if (user) {
         //counting users with greater score
-        const hscores = await User.countDocuments({ totalScore: { "$gt": user.totalScore } });
-        const rank = hscores + 1;
+        const rank = user.rank;
         if (!req.isAuthenticated()) {
             res.render("profile/profile", { user, rank, check: false, usernames,pictures});
         }

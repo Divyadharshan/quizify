@@ -17,7 +17,8 @@ const userschema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+    rank : {type:Number,default:0}
 });
 userschema.plugin(passportlocalmongoose);
 module.exports=mongoose.model("User",userschema);

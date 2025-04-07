@@ -11,6 +11,13 @@ async function updateleaderboard(){
     leaderboard = await User.find({}, { username: 1, totalScore: 1, profilePicture: 1 }).sort({ totalScore: -1, username :-1 });
     await Leaderboard.findOneAndUpdate({type:"overall"},{data:leaderboard},{upsert:true,new:true});
     const overall=await Leaderboard.findOne({type:"overall"});
+    var r = 1;
+    for(let u of overall.data){
+        const us = await User.findOne({username:u.username});
+        us.rank=r;
+        us.save();
+        r++;
+    }
     cacheleaderboard=overall?overall.data:[];
 
     const yesterday = new Date();
