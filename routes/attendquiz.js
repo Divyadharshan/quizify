@@ -3,7 +3,13 @@ const router = express.Router();
 const {isLoggedIn} = require("../middleware");
 
 router.get("/", isLoggedIn, (req, res) => {
-    res.render("quizpages/attendquiz");
+    if(req.query){
+        var {quizcode} = req.query;
+    }
+    else{
+        quizcode='0';
+    }
+    res.render("quizpages/attendquiz",{code:quizcode});
 })
 router.post("/", isLoggedIn, (req, res) => {
     const { quizcode } = req.body;

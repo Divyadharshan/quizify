@@ -82,7 +82,6 @@
         .navbar a:hover {
             color: var(--primary);
         }
-
     </style>
 </head>
 
@@ -123,11 +122,26 @@
                 <a href="/viewquiz/<%=quiz._id%>">
                 <button>View</button>
                 </a>
+                <span onclick="copytoclipboard('<%=quiz.number%>')">
+                   <button>Share</button>
+                </span>
+</p>
             </div>
         </div>
         <br>
         <% }); %>
         <% } %>
+        <script>
+        function copytoclipboard(code) {
+            const link=`https://quizify.azurewebsites.net/attendquiz?quizcode=${code}`;
+            navigator.clipboard.writeText(link).then(()=>{
+                 alert('Link copied to clipboard! Anyone with this link can attend Quiz');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+</script>
+
 </body>
 
 </html>

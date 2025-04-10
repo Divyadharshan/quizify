@@ -3,7 +3,7 @@ const router = express.Router();
 const app = express();
 const User = require("../models/user");
 const UserQuiz = require("../models/userquiz");
-const { isLoggedIn, isAuth} = require("../middleware");
+const { isLoggedIn, isAuth, storeReturnTo } = require("../middleware");
 const { transporter } = require("../mailconfig");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
@@ -16,8 +16,9 @@ router.get("/login", isAuth, (req, res) => {
     res.render("auth/login");
 })
 
-router.post("/login", isAuth, passport.authenticate("local", { failureRedirect: "/login",failureFlash: "Invalid username or password!"}), (req, res) => {
-    res.redirect("/");
+router.post("/login", storeReturnTo, isAuth, passport.authenticate("local", { failureRedirect: "/login", failureFlash: "Invalid username or password!" }), (req, res) => {
+    const gotourl = res.locals.returnTo || "/";
+    res.redirect(gotourl);
 });
 
 router.get("/register", isAuth, (req, res) => {
@@ -132,52 +133,52 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
     })
 })
 
-router.post('/logout',async(req,res)=>{
+router.post('/logout', async (req, res) => {
     const user = await User.findById(req.user._id);
     const ind = new Date().toLocaleDateString("en-GB", {
-            timeZone: "Asia/Kolkata",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
     }).split("/").reverse().join("-");
-    
-    const attempt=user.logoutAttempts.find(a=>a.date===ind);
-    if(attempt){
-        attempt.times+=1;
+
+    const attempt = user.logoutAttempts.find(a => a.date === ind);
+    if (attempt) {
+        attempt.times += 1;
         console.log("check2");
     }
-    else{
-        user.logoutAttempts.push({date:ind,times:1});
+    else {
+        user.logoutAttempts.push({ date: ind, times: 1 });
         console.log("check1");
     }
     app.locals.tabswitch = true;
     await user.save();
-    req.session.destroy((err)=>{
-        if(err){
-            return res.status(500).json({success:false});
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ success: false });
         }
-        return res.status(200).json({success:true});
+        return res.status(200).json({ success: true });
     });
 });
 
-router.post('/quizlogout',async(req,res)=>{
-    const quiz = await UserQuiz.findOne({number:req.body.number});
-    const attempt=quiz.logoutAttempts.find(a=>a.user.toString()===req.user._id.toString());
-    if(attempt){
-        attempt.times+=1;
+router.post('/quizlogout', async (req, res) => {
+    const quiz = await UserQuiz.findOne({ number: req.body.number });
+    const attempt = quiz.logoutAttempts.find(a => a.user.toString() === req.user._id.toString());
+    if (attempt) {
+        attempt.times += 1;
         console.log("check2");
     }
-    else{
-        quiz.logoutAttempts.push({user:req.user._id,times:1});
+    else {
+        quiz.logoutAttempts.push({ user: req.user._id, times: 1 });
         console.log("check1");
     }
     app.locals.tabswitch = true;
     await quiz.save();
-    req.session.destroy((err)=>{
-        if(err){
-            return res.status(500).json({success:false});
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ success: false });
         }
-        return res.status(200).json({success:true});
+        return res.status(200).json({ success: true });
     });
 });
 
@@ -220,7 +221,7 @@ The Quizify Team 🌟`
     });
 })
 
-router.get('/resetpassword',isAuth, (req, res) => {
+router.get('/resetpassword', isAuth, (req, res) => {
     let { id, token } = req.query;
     try {
         const check = jwt.verify(token, process.env.JWTSECRET)
@@ -231,7 +232,7 @@ router.get('/resetpassword',isAuth, (req, res) => {
     }
 
 })
-router.post('/resetpassword',isAuth, async (req, res) => {
+router.post('/resetpassword', isAuth, async (req, res) => {
     const { password } = req.body;
     const user = await User.findOne({ _id: req.query.id });
     if (user) {
@@ -242,42 +243,69 @@ router.post('/resetpassword',isAuth, async (req, res) => {
     }
 })
 
-router.get("/setpwd", isAuth,(req, res) => {
+router.get("/setpwd", isAuth, (req, res) => {
     res.render("auth/setpwd");
 })
 
-router.get("/viewquizzes/:id",isLoggedIn,async(req,res)=>{
-    const Quiz = await UserQuiz.find({author:req.params.id});
-    res.render("quizpages/viewquizzes",{quizzes:Quiz})
-})
-router.get("/viewquiz/:id",isLoggedIn,async(req,res)=>{
-    const Quiz = await UserQuiz.find({_id:req.params.id});
-    const usernames = [],scores=[],logouts=[];
-    for(const a of Quiz[0].userAttempts){
-        scores.push(a.score);
-        const la = Quiz[0].logoutAttempts.find(k=>k.user && k.user.toString()===a.user.toString());
-        if(la){
-            logouts.push(la.times);
+router.get("/viewquizzes/:id", isLoggedIn, async (req, res) => {
+    try {
+        const Quiz = await UserQuiz.find({ author: req.params.id });
+        if (!(req.user._id.toString() === req.params.id.toString())) {
+            return res.redirect("/restricted");
         }
-        else{
-            logouts.push(0);
-        }
-        const us = await User.findById(a.user);
-        usernames.push(us.username);
+        res.render("quizpages/viewquizzes", { quizzes: Quiz })
     }
-    res.render("quizpages/viewquiz",{quizzes:Quiz,usernames,scores,logouts})
+    catch (e) {
+        return res.redirect("/notfound");
+    }
+
 })
-router.delete("/viewquiz/:id",isLoggedIn,async(req,res)=>{
-    await UserQuiz.deleteOne({_id:req.params.id});
-    return res.redirect(`/viewquizzes/${req.user._id}`);
+router.get("/viewquiz/:id", isLoggedIn, async (req, res) => {
+    try {
+        const Quiz = await UserQuiz.find({ _id: req.params.id });
+        if (!(req.user._id.toString() === Quiz[0].author.toString())) {
+            return res.redirect("/restricted");
+        }
+        const usernames = [], scores = [], logouts = [];
+        for (const a of Quiz[0].userAttempts) {
+            scores.push(a.score);
+            const la = Quiz[0].logoutAttempts.find(k => k.user && k.user.toString() === a.user.toString());
+            if (la) {
+                logouts.push(la.times);
+            }
+            else {
+                logouts.push(0);
+            }
+            const us = await User.findById(a.user);
+            usernames.push(us.username);
+        }
+        res.render("quizpages/viewquiz", { quizzes: Quiz, usernames, scores, logouts })
+    }
+    catch (e) {
+        return res.redirect("/notfound");
+    }
+})
+router.delete("/viewquiz/:id", isLoggedIn, async (req, res) => {
+    try{
+        const Quiz = await UserQuiz.find({ _id: req.params.id });
+        if(!(req.user._id.toString()===Quiz[0].author.toString())){
+            return res.redirect("/restricted");
+        }
+        await UserQuiz.deleteOne({ _id: req.params.id });
+        return res.redirect(`/viewquizzes/${req.user._id}`);
+    }
+    catch(e){
+        return res.redirect("/error");
+    }
 })
 
-router.get("/warning",(req,res)=>{
-    if(app.locals.tabswitch===true){
-          app.locals.tabswitch=false;
-          return res.render("auth/warning");}
-    else{
-          return res.redirect("/");
+router.get("/warning", (req, res) => {
+    if (app.locals.tabswitch === true) {
+        app.locals.tabswitch = false;
+        return res.render("auth/warning");
+    }
+    else {
+        return res.redirect("/");
     }
 })
 module.exports = router;

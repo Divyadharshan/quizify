@@ -133,7 +133,11 @@ input:focus {
     </div>
     <form action="/attendquiz" method="POST">
     <label for="quizcode"> <h2>Enter Quiz Code : </h2></label>
-    <input type="text" id="quizcode" name="quizcode" autofocus required>
+    <%if(code==='0'){%>
+        <input type="text" id="quizcode" name="quizcode" autofocus required>
+    <% } else {%>
+        <input type="text" id="quizcode" name="quizcode" value="<%=code%>" autofocus required>
+    <%}%>
     <button type="submit">ATTEND QUIZ</button>
     </form>
 </body>
