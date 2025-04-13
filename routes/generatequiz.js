@@ -2,51 +2,50 @@ const express = require("express")
 const router = express.Router();
 const axios = require("axios");
 const UserQuiz = require("../models/userquiz");
-const {isLoggedIn} = require("../middleware");
-async function generateQuiz(topic) {
+const { isLoggedIn } = require("../middleware");
+const Groq = require("groq-sdk").default;
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY_QUIZ });
+async function generateQuiz(topic, count) {
     try {
-        console.log(process.env.qapi);
-        console.log(topic);
-        const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-            model: "deepseek/deepseek-r1-zero:free",
+        const response = await groq.chat.completions.create({
+            model: process.env.MODEL1,
             messages: [
-                { role: "system", content: "You are a quiz generator. Provide quiz questions in JSON format only, without additional text." },
                 {
-                    role: "user", content: `Generate 5 multiple-choice quiz questions on ${topic}.Each question should have exactly 4 options and indicate the correct option index (0-based).
-                    Example response : [{"question": "Sample?", "options": ["A", "B", "C", "D"], "correctoption": 1}]` }
-            ],
-            max_tokens: 10000
-        }, {
-            headers: {
-                "Authorization": `Bearer ${process.env.qapi}`,
-                "Content-Type": "application/json"
-            }
+                    role: "system",
+                    content: process.env.SYSTEMPROMPT
+                },
+                {
+                    role: "user",
+                    content: `Generate exactly ${count} multiple-choice quiz questions on the topic: ${topic}. Mix difficulty levels (easy, medium, hard) but DO NOT generate more or fewer than ${count} questions.`
+                }
+            ]
         });
-        const jsonString = response.data.choices[0].message.content.trim();
-        const questions = JSON.parse(jsonString.slice(jsonString.indexOf('['), jsonString.lastIndexOf(']') + 1));
-        console.log(questions);
+        const content = response.choices?.[0]?.message?.content?.trim() || "";
+        const jsonString = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1);
+        const questions = JSON.parse(jsonString).slice(0,count);
+
         return questions.map((q, index) => ({
             id: index + 1,
             question: q.question,
             options: q.options,
             correctoption: q.correctoption
         }));
-
     } catch (error) {
-        console.error("Error generating quiz:", error.message);
-        return null;
+        console.error("Error generating quiz with Groq:", error.message);
+        return "error";
     }
 }
 
-router.post("/", isLoggedIn,async (req, res) => {
+router.post("/", isLoggedIn, async (req, res) => {
     const quiztopic = req.session.quiztopic;
-    console.log("inside generate quiz : ", quiztopic);
+    const qcount = req.session.qcount;
     try {
-        const question = await generateQuiz(quiztopic);
+        const question = await generateQuiz(quiztopic, qcount);
         if (!question) {
-            return res.status(500).json({ error: "Failed to generate quiz" });
+            return res.redirect("/createquiz");
         }
-        const newQuiz = new UserQuiz({ author: req.user._id, questions: question,topic:quiztopic });
+        const newQuiz = new UserQuiz({ author: req.user._id, questions: question, topic: quiztopic });
         await newQuiz.save();
         req.session.newQuiz = newQuiz;
         return res.json({ success: true });

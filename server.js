@@ -35,15 +35,13 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
-const { isLoggedIn, isAuth, storeReturnTo } = require("./middleware");
+const { isLoggedIn, isAuth } = require("./middleware");
 
 mongoose.connect(process.env.MONGO_URI);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection errror :"));
 db.once("open", async () => {
     console.log("Database Connected");
-    /*await mongoose.connection.db.dropCollection("userquizzes");
-        console.log("Collection 'userquizzes' deleted successfully");*/
 })
 
 app.use(express.json());
@@ -142,24 +140,18 @@ app.use((req, res, next) => {
     next();
 })
 
-app.get("/auth/google", (req, res, next) => {
-   if (!req.session.returnTo && req.headers.referer && !req.headers.referer.includes("/auth/google")) {
-        req.session.returnTo = req.headers.referer;
-    }
-  next();
-}, passport.authenticate("google", {
-  access_type: "offline",
-  scope: ["profile", "email"]
+app.get("/auth/google", passport.authenticate("google", {
+    access_type: "offline",
+    scope: ["profile", "email"]
 }));
-
 
 app.get("/auth/google/callback",
     passport.authenticate("google", {
         failureRedirect: "/login",
         failureFlash: true
-    }),storeReturnTo,
+    }),
     (req, res) => {
-        res.redirect(res.locals.returnTo||"/");
+        res.redirect("/");
     }
 );
 

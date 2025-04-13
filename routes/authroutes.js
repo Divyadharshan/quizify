@@ -7,6 +7,7 @@ const { isLoggedIn, isAuth, storeReturnTo } = require("../middleware");
 const { transporter } = require("../mailconfig");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
+const Groq = require("groq-sdk").default;
 
 router.get("/", isLoggedIn, (req, res) => {
     res.render("quizpages/home");
@@ -308,4 +309,32 @@ router.get("/warning", (req, res) => {
         return res.redirect("/");
     }
 })
+
+//Chatbot
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY_CHATBOT });
+router.post("/chat",isLoggedIn, async (req, res) => {
+  const userMessage = req.body.messages;
+  try {
+    const response = await groq.chat.completions.create({
+      model: process.env.MODEL2,
+      messages: [
+        {
+          role: "system",
+          content: process.env.BOTPROMPT,
+          },
+        {
+          role: "user",
+          content: userMessage,
+        },
+      ],
+    });
+
+    const reply = response.choices?.[0]?.message?.content || "Sorry, no response.";
+    res.json({ reply });
+  } catch (error) {
+    console.error("Groq error:", error);
+    res.status(500).json({ reply: "Error talking to Groq." });
+  }
+});
+
 module.exports = router;
