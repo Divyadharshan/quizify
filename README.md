@@ -1,5 +1,5 @@
-<div style="display: flex; justify-content:center;align-items: center;">
-  <img src="/public/logo.png" width="200" height="200" />
+<div align="center">
+  <img src="/public/logo.png" width="250" height="250">
 </div>
 
 Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and enjoy fair play with strict session management. Create, share, and challenge friends while following others to discover exciting new quizzes! 🎯🏆
