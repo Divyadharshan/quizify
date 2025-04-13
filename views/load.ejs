@@ -55,11 +55,11 @@
                 if (result.success) {
                     window.location.href = "/createquiz";
                 } else {
-                    document.body.innerHTML = "<h2>Failed to generate quiz. Please try again.</h2>";
+                    document.body.innerHTML = `<h2 style="color:white;">&nbsp;Please try again later.</h2>`;
                 }
             } catch (error) {
                 console.error("Error:", error);
-                document.body.innerHTML = "<h2>Server error. Please try again.</h2>";
+                document.body.innerHTML = `<h2 style="color:white;">&nbsp;Please try again later.</h2>`;
             }
         }
         generateQuiz();

@@ -16,8 +16,9 @@ router.get("/", isLoggedIn, (req, res) => {
 })
 
 router.post("/", isLoggedIn, async (req, res) => {
-    const { quiztopic } = req.body;
+    const { quiztopic,qcount } = req.body;
     req.session.quiztopic = quiztopic;
+    req.session.qcount=qcount;
     return res.redirect("/load")
 })
 

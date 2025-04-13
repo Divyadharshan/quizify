@@ -1,4 +1,6 @@
-<h1><p align="center">🎯 Quizify</p></h1>
+<div align="center">
+  <img src="/public/logo.png" width="250" height="250">
+</div>
 
 Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and enjoy fair play with strict session management. Create, share, and challenge friends while following others to discover exciting new quizzes! 🎯🏆
 
@@ -20,26 +22,6 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 ## 🚀 Live Demo
 - [https://quizify.azurewebsites.net/](https://quizify.azurewebsites.net/)
 
-
-## ⚙️ Installation
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/krish2213/quizify.git
-   ```
-2. Navigate to the project directory:
-   ```sh
-   cd quizify
-   ```
-3. Install dependencies:
-   ```sh
-   npm install 
-   ```
-4. Run the application:
-   ```sh
-   npm start 
-   ```
-
 ## 🛠 Technologies Used
 - 🎨 **Frontend:** HTML, CSS, JavaScript
 - ⚙️ **Backend:** Node.js (Express)
@@ -48,7 +30,7 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - 📧 **Email Service:** Nodemailer
 - ⏳ **Scheduling:** Nodecron
 - ☁️ **Image Storage:** Cloudinary
-- 🧠 **AI Integration:** DeepSeek API (via OpenRouter)
+- 🧠 **AI Integration:** GroqCloud API
 - 🚀 **Deployment:** Microsoft Azure
 
 ## 🤝 Contributing
