@@ -18,6 +18,7 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - ⏰ **Scheduling:** Leaderboard updates automatically at **12:24 AM** every day.
 - 🔓 **Logout Feature:** Secure user logout functionality.
 - 👥 **Follow Feature:** Users can follow others to keep track of their daily quizzes and scores.
+- 🤖 **AI-Powered Chatbot Assistant:** A smart in-app assistant that helps users navigate the app using natural commands like "go to profile", "start today’s quiz", "go to my quizzes", etc. It guides users, offers help, and improves accessibility with real-time interaction.
 
 ## 🚀 Live Demo
 - [https://quizify.azurewebsites.net/](https://quizify.azurewebsites.net/)
