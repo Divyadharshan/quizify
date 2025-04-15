@@ -10,6 +10,8 @@ const leaderboardSchema = new mongoose.Schema({
       score: Number,
     },
   ],
-});
+},
+{ timestamps: true }
+);
 
 module.exports = mongoose.model("Leaderboard", leaderboardSchema);
