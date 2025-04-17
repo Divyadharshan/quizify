@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create account</title>
     <link rel="stylesheet" href="/style.css">    
-    <link rel="shortcut icon" href="/logo.png" type="image/x-icon">    
+    <link rel="shortcut icon" href="/logo.png" type="image/x-icon">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="/script.js"></script> 
     </style>
 </head>
 <body>
@@ -15,7 +17,10 @@
         <label for="password">Set Password</label>
         <input type="hidden" name="username" value="<%= username %>">
         <input type="hidden" name="email" value="<%= email %>">
+        <div style="position:relative;">
         <input type="password" id="password" name="password" required>
+            <i class="fa-solid fa-eye" id="togglePassword" style="position: absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;" onclick="showpwd()"></i>
+        </div>
         <button type="submit" style="width:60%;">Register Account</button>
     </form>
 
