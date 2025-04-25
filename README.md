@@ -31,7 +31,7 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - 📧 **Email Service:** Nodemailer
 - ⏳ **Scheduling:** Nodecron
 - ☁️ **Image Storage:** Cloudinary
-- 🧠 **AI Integration:** GroqCloud API
+- 🧠 **AI Integration:** GroqCloud API & Gemini API
 - 🚀 **Deployment:** Microsoft Azure
 
 ## 🤝 Contributing
