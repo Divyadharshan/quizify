@@ -4,13 +4,37 @@ const {dailyleaderboard,leaderboard,updatedAt} = require("../cronjob");
 
 router.get("/", async (req, res)=>{
     const { type } = req.query;
+    const page = parseInt(req.query.page)||1;
+    const perpage = 10;
+    let data = [];
+    let total = 0;
+    let updated = updatedAt();
+
     if (type === "alltime") {
-        res.render("leaderboard/allleaderboard", {data:leaderboard(),updatedAt:updatedAt()});
+        const allData = leaderboard();
+        total = allData.length;
+        data = allData.slice((page-1)*perpage,page*perpage);
+        res.render("leaderboard/allleaderboard", {
+            data,
+            updatedAt: updated,
+            currentPage: page,
+            totalPages: Math.ceil(total/perpage),
+            limit:perpage
+        });
     }
-    else if (type === "daily"){
-        res.render("leaderboard/dailyleaderboard",{data:dailyleaderboard(),updatedAt:updatedAt()});
+    else if (type === "daily") {
+        const allData = dailyleaderboard();
+        total = allData.length;
+        data = allData.slice((page-1)*perpage,page*perpage);
+        res.render("leaderboard/dailyleaderboard", {
+            data,
+            updatedAt: updated,
+            currentPage: page,
+            totalPages: Math.ceil(total/perpage),
+            limit:perpage
+        });
     }
-    else{
+    else {
         return res.redirect("/notfound");
     }
 })

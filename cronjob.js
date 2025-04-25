@@ -8,7 +8,7 @@ let leaderboard=[];
 let dailyleaderboard=[];
 let updatedtime="";
 async function updateleaderboard(){
-    leaderboard = await User.find({}, { username: 1, totalScore: 1, profilePicture: 1, updatedAt : 1 }).sort({ totalScore: -1, username :-1 });
+    leaderboard = await User.find({quizAttempts:{$ne:[]}},{ username: 1, totalScore: 1, profilePicture: 1, updatedAt : 1 }).sort({ totalScore: -1, username :-1 });
     await Leaderboard.findOneAndUpdate({type:"overall"},{data:leaderboard},{upsert:true,new:true});
     const overall=await Leaderboard.findOne({type:"overall"});
     var r = 1;
@@ -64,7 +64,13 @@ cron.schedule("24 0 * * *",async()=>{
 
 async function loadonrestart(){
     const overall=await Leaderboard.findOne({type:"overall"});
-    updatedtime=overall.updatedAt.toLocaleString('en-IN', {timeZone: 'Asia/Kolkata',day: '2-digit',month: '2-digit',year: 'numeric',hour: '2-digit',minute: '2-digit'}).replace(",","").replace("am","").trim()+"AM";
+    updatedtime=overall.updatedAt.toLocaleString('en-IN', {timeZone: 'Asia/Kolkata',day: '2-digit',month: '2-digit',year: 'numeric',hour: '2-digit',minute: '2-digit'}).replace(", "," (");
+    if(updatedtime.includes("am")){
+        updatedtime=updatedtime.replace("am","").trim()+"AM)";
+    }
+    else{
+        updatedtime=updatedtime.replace("pm","").trim()+"PM)";
+    }
     cacheleaderboard=overall?overall.data:[];
     const daily=await Leaderboard.findOne({type:"daily"});
     cachedailyleaderboard=daily?daily.data:[];
