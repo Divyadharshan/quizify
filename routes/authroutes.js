@@ -286,6 +286,49 @@ router.get("/viewquiz/:id", isLoggedIn, async (req, res) => {
         return res.redirect("/notfound");
     }
 })
+router.get("/updatequiz/:id", isLoggedIn, async (req, res) => {
+    try {
+        const Quiz = await UserQuiz.find({ _id: req.params.id });
+        if (!(req.user._id.toString() === Quiz[0].author.toString())) {
+            return res.redirect("/restricted");
+        }
+        res.render("quizpages/updatequiz", {quizzes:Quiz})
+    }
+    catch (e) {
+        return res.redirect("/notfound");
+    }
+})
+router.put("/viewquiz/:id", isLoggedIn, async (req, res) => {
+    try {
+        const quiz = await UserQuiz.findById(req.params.id);
+        if (!quiz || req.user._id.toString() !== quiz.author.toString()) {
+            return res.redirect("/restricted");
+        }
+
+        const updatedQuestions = quiz.questions.map((q, qIndex) => {
+            const updatedOptions = q.options.map((_, optIndex) => {
+                return req.body[`option-${qIndex}-${optIndex}`] || "";
+            });
+
+            const updatedCorrect = parseInt(req.body[`correctoption-${qIndex}`], 10);
+            const updatedTitle = req.body[`question-${qIndex}`] || "";
+
+            return {
+                question: updatedTitle,
+                options: updatedOptions,
+                correctoption: updatedCorrect
+            };
+        });
+
+        quiz.questions = updatedQuestions;
+        await quiz.save();
+        res.redirect(`/viewquiz/${quiz._id}`);
+    } catch (e) {
+        console.error("Error updating quiz:", e);
+        res.status(500).send("Error updating quiz");
+    }
+});
+
 router.delete("/viewquiz/:id", isLoggedIn, async (req, res) => {
     try{
         const Quiz = await UserQuiz.find({ _id: req.params.id });

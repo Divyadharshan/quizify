@@ -141,6 +141,7 @@
             <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
         </div>
     </div>
+    <br><br><br><br>
     <form action="/createquiz" method="POST">
         <label for="quiztopic">
             <h2>Enter Quiz Topic : </h2>
@@ -161,9 +162,10 @@
         <button type="submit">CREATE QUIZ</button>
         <br>
         <% if(newQuiz.questions.length!=0){ %>
-            <p>Your Quiz code is : <%=newQuiz.number%>
-            </p>
-            <% } %>
+            <p>Your Quiz code is : <%=newQuiz.number%></p>
+        <% } else { %>
+            <p><i>Note: AI can make mistakes</i></p>
+        <% } %>
     </form>
 </body>
 

@@ -182,7 +182,9 @@
                         <% }); %>
                 </div>
                 <% }); %>
-
+                    <a href="/updatequiz/<%=quiz._id%>">
+                    <button>Edit Quiz</button>
+                    </a>
                     <!-- Delete Button -->
                     <form action="/viewquiz/<%= quiz._id %>?_method=DELETE" method="POST">
                         <button>Delete Quiz</button>

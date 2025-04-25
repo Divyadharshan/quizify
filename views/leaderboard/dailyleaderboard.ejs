@@ -38,6 +38,35 @@
         .navbar a:hover {
             color: var(--primary);
         }
+        .pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.pagination a {
+  color: var(--white);
+  background-color: var(--surface);
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  border: 1px solid var(--primary);
+  margin: 0 4px;
+  border-radius: 6px;
+}
+
+.pagination a.active {
+  background-color: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+  color: black;
+}
         </style>
 
 
@@ -58,11 +87,11 @@
         </div>
         <% } %>
     </div>
-    <h4><i>updated at : <%=updatedAt%></i></h4>
+    <br><br><br><h4><i>🕒Updated : <%=updatedAt%></i></h4>
     <div class="l-wrapper">
         <div class="c-card">
             <div class="c-card__header">
-                <h2>Daily Leaderboard</h2>
+                <h2>📅 Daily Leaderboard</h2>
             </div>
             <div class="table-container">
             <table>
@@ -76,7 +105,17 @@
                 <tbody>
                         <% data.forEach((dataa,index) => { %>
                         <tr>
-                        <td ><%=index+1%></td>
+                        <td><%let rank=limit*(currentPage-1)+index+1;
+                              if(rank===1){ 
+                                %><span style="font-size:24px;padding-left:10px;">🥇</span> 
+                              <% }else if(rank===2){ 
+                                %><span style="font-size:24px;padding-left:10px;">🥈</span>
+                              <% }else if(rank===3){
+                                %><span style="font-size:24px;padding-left:10px;">🥉</span> 
+                              <%}else{
+                                %><span style="padding-left:21px;"><%=rank%></span> 
+                              <%}%>
+                        </td>
                             <td class="username">
                                 <img class="profile-pic" src="<%= dataa.profilePicture %>" alt="Profile Picture">
                                 <a href="/profile/<%=dataa.username%>" style="text-decoration: none;color: #7B16FF"><%= dataa.username %></a>
@@ -86,6 +125,22 @@
                     <% }) %>
                 </tbody>
             </table>
+            <div class="pagination">
+    <% if (currentPage > 1) { %>
+        <a href="?type=daily&page=<%= currentPage - 1 %>">❮</a>
+    <% } else { %>
+        <a style="pointer-events: none; opacity: 0.5;">❮</a>
+    <% } %>
+
+    
+    <a href="?type=daily&page=<%=currentPage%>" class="active"><%=currentPage%></a>
+
+    <% if (currentPage < totalPages) { %>
+        <a href="?type=daily&page=<%= currentPage + 1 %>">❯</a>
+    <% } else { %>
+        <a style="pointer-events: none; opacity: 0.5;">❯</a>
+    <% } %>
+</div>
         </div>
         </div>
     </div>
