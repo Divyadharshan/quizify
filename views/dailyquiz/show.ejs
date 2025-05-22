@@ -220,6 +220,7 @@
     <div class="quiz-container">
         <h1>Daily Quiz</h1>
         <div class="quiz-wrapper">
+        <% if (data){ %>
             <div class="sidebar">
                 <% data.questions.forEach((question, index)=> { %>
                     <button data-index="<%= index %>">
@@ -263,9 +264,15 @@
                             </center>
                 </form>
             </div>
+            <%} else {%>
+            <div class="question-container">
+                    <h2 style="text-align:center;color:var(--primary);">Daily Quiz not found!</h2>
+            </div>
+            <% } %>
         </div>
     </div>
-
+   
+    <% if (data){ %>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const questions = document.querySelectorAll("div[id^='question_']");
@@ -324,7 +331,7 @@
             });
         });
     </script>
-
+    <% } %>
 </body>
 
 </html>
