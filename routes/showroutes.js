@@ -30,9 +30,9 @@ router.get("/", isLoggedIn, async (req, res) => {
             return res.render("solved", { data, score: 0, caption: "Your attempt for today is over due to exceeding the tab-switch limit" })
         }
     }
-    if (!data) {
+    /*if (!data) {
         return res.send("No Quiz Found");
-    }
+    }*/
     res.render("dailyquiz/show", { data });
 });
 
