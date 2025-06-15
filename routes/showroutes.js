@@ -60,6 +60,7 @@ router.post("/", isLoggedIn, async (req, res) => {
         });
         user.quizAttempts.push({ date: ind, score });
         user.totalScore += score;
+        user.xp+=1;
         await user.save();
         console.log("post req");
         return res.render("solved", { data: quiz, score: score, caption: "You have successfully completed the quiz for today!" });

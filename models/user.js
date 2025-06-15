@@ -18,7 +18,12 @@ const userschema = new Schema({
             ref: "User"
         }
     ],
-    rank : {type:Number,default:0}
+    rank : {type:Number,default:0},
+    xp : {type:Number,default:0},
+    won : {type:Number, default:0},
+    lost : {type:Number, default:0},
+    draw : {type:Number, default:0}
+
 });
 userschema.plugin(passportlocalmongoose);
 module.exports=mongoose.model("User",userschema);

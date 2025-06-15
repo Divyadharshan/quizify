@@ -59,8 +59,7 @@ const sessionConfig = {
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 1,
-        maxAge: 1000 * 60 * 60 * 24 * 1
+        maxAge: 1000 * 60 * 60 * 24 * 365 //One year
     }
 }
 
@@ -83,8 +82,19 @@ passport.use(new GoogleStrategy({
                 user.googleId = profile.id;
                 await user.save();
             } else {
+                let username;
+                let unique=false;
+                while(!unique){
+                    const random=Math.floor(Math.random()*10000);//Random number between 0-9999
+                    const tusername=`quizzer${random}`;
+                    const check=await User.findOne({username:tusername});
+                    if(!check){
+                        username=tusername;
+                        unique=true;
+                    }
+                }
                 user = new User({
-                    username: profile.displayName,
+                    username:username,
                     email: profile.emails[0].value,
                     googleId: profile.id,
                 });
@@ -97,6 +107,7 @@ Hi ${user.username},
         Welcome to Quizify! 🎯 We're thrilled to have you on board. Get ready to explore, create, and challenge yourself with exciting quizzes!
          🔥 Here's what you can do:
                 ✅ Play quizzes on various topics 📚
+                ✅ Challenge friends 1v1 with a timer and earn XPs! ⚔️⏱️
                 ✅ Create your own quizzes & challenge friends 🎨
                 ✅ Generate quizzes automatically with AI 🤖
                 ✅ Take on the Daily Quiz & boost your score! 📅

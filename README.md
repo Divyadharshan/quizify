@@ -8,6 +8,7 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - 📲 **Progressive Web App (PWA):** Users can install the app to their device with a custom install prompt for a native app-like experience.
 - 🔐 **User Authentication:** Users register via email, and accounts are created after verification.
 - 📩 **Welcome Mail:** A welcome email is sent upon successful registration.
+- ⚔️ **1v1 Challenge Mode:** Challenge any user to a 1v1 quiz battle on a selected topic. Win/loss/draw stats are visually displayed via a doughnut chart. Earn XP for completing quizzes, winning challenges.
 - 🧠 **AI-Generated & User-Created Quizzes:** Users can take AI-generated quizzes or quizzes created by others using shared quiz codes.
 - ❌ **Quiz Attempt Rules:** Users cannot retake the Daily Quiz on the same day; only one attempt is allowed.
 - 🔄 **Strict Session Management Policy:**
@@ -16,7 +17,6 @@ Take Daily Quiz, AI-powered or user-created quizzes, climb the leaderboards, and
 - ✍️ **Quiz Creation & Sharing:** Users can create unlimited quizzes using AI or manual input and share quiz codes.
 - 🏆 **Leaderboard:** Daily and overall leaderboards track top performers.
 - ⏰ **Scheduling:** Leaderboard updates automatically at **12:24 AM** every day.
-- 🔓 **Logout Feature:** Secure user logout functionality.
 - 👥 **Follow Feature:** Users can follow others to keep track of their daily quizzes and scores.
 - 🤖 **AI-Powered Chatbot Assistant:** A smart in-app assistant that helps users navigate the app using natural commands like "go to profile", "start today’s quiz", "go to my quizzes", etc. It guides users, offers help, and improves accessibility with real-time interaction.
 
