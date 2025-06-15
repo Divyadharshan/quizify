@@ -497,20 +497,42 @@ router.post("/playchallenge/:id",isLoggedIn,async(req,res)=>{
         if(a1.score>a2.score){
             user1.xp+=5;
             user1.won+=1;
-            user2.xp-=5;
-            user2.xp=Math.max(0,user2.xp);
+            user1.recentform.push(1);
+            if(user1.recentform.length>5){
+                user1.recentform.shift();
+            }
+            user2.xp-=2;
             user2.lost+=1;
+            user2.recentform.push(-1);
+            if(user2.recentform.length>5){
+                user2.recentform.shift();
+            }
         }
         else if(a2.score>a1.score){
             user2.xp+=5;
             user2.won+=1;
-            user1.xp-=5;
-            user1.xp=Math.max(0,user1.xp);
+            user2.recentform.push(1);
+            if(user2.recentform.length>5){
+                user2.recentform.shift();
+            }
+            user1.xp-=2;
             user1.lost+=1;
+            user1.recentform.push(-1);
+            if(user1.recentform.length>5){
+                user1.recentform.shift();
+            }
         }
         else{
             user1.draw+=1;
+            user1.recentform.push(0);
+            if(user1.recentform.length>5){
+                user1.recentform.shift();
+            }
             user2.draw+=1;
+            user2.recentform.push(0);
+            if(user2.recentform.length>5){
+                user2.recentform.shift();
+            }
         }
         await user1.save();
         await user2.save();
@@ -536,7 +558,7 @@ router.get("/1v1stats/:username",async(req,res)=>{
     if(!user){
         return res.redirect("/statsnotfound");
     }
-    return res.render("profile/stats",{won:user.won,lost:user.lost,draw:user.draw,username});
+    return res.render("profile/stats",{won:user.won,lost:user.lost,draw:user.draw,username,recentform:user.recentform});
 })
 
 module.exports = router;
