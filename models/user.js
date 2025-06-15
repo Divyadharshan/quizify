@@ -22,7 +22,8 @@ const userschema = new Schema({
     xp : {type:Number,default:0},
     won : {type:Number, default:0},
     lost : {type:Number, default:0},
-    draw : {type:Number, default:0}
+    draw : {type:Number, default:0},
+    recentform : [{type:Number}]
 
 });
 userschema.plugin(passportlocalmongoose);
