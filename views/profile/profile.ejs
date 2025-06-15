@@ -46,7 +46,7 @@
             background: var(--surface);
             color: var(--color);
             border-radius: 10px;
-            padding: 20px;
+            padding: 20px 20px 10px 10px;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
@@ -238,19 +238,31 @@
                 <div class="button">
                     <% if (check===false){%>
                         <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
+                        <a href="/1v1stats/<%=user.username%>">
+                                  <button class="btn">1v1 Stats <i class="fa-solid fa-chart-pie"></i></button>
+                                </a>
                         <%} else{ %>
                             <button class="btn" id="fbutton">Following <i class="fas fa-user-check"></i></button>
+                            <a href="/1v1stats/<%=user.username%>">
+                                  <button class="btn">1v1 Stats <i class="fa-solid fa-chart-pie"></i></button>
+                                </a>
                             <% } %>
                 </div>
                 <% } else {%>
                     <a href="/editprofile">
                         <button class="btn">Edit Profile <i class="fas fa-user-edit"></i></button>
+                        <a href="/1v1stats/<%=user.username%>">
+                                  <button class="btn">1v1 Stats <i class="fa-solid fa-chart-pie"></i></button>
+                                </a>
                     </a>
                     <% } %>
                         <% } else { %>
                             <button class="btn" id="fbutton">Follow <i class="fas fa-user-plus"></i></button>
+                            <a href="/1v1stats/<%=user.username%>">
+                                  <button class="btn">1v1 Stats <i class="fa-solid fa-chart-pie"></i></button>
+                                </a>
                             <% } %>
-                                <br>
+                                
                                 <div class="ds-info">
                                     <div>
                                         <h4>Rank</h4>
@@ -268,6 +280,12 @@
                                         <h4>DQ</h4>
                                         <p>
                                             <%=user.quizAttempts.length%>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <h4>XP</h4>
+                                        <p>
+                                            <%=user.xp%>
                                         </p>
                                     </div>
                                 </div>

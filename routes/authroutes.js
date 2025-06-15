@@ -3,14 +3,18 @@ const router = express.Router();
 const app = express();
 const User = require("../models/user");
 const UserQuiz = require("../models/userquiz");
+const Challenge = require("../models/challenge");
 const { isLoggedIn, isAuth, storeReturnTo } = require("../middleware");
 const { transporter } = require("../mailconfig");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const Groq = require("groq-sdk").default;
+const axios = require("axios");
+const user = require("../models/user");
 
-router.get("/", isLoggedIn, (req, res) => {
-    res.render("quizpages/home");
+router.get("/", isLoggedIn, async(req, res) => {
+    const c = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture').sort({ _id: -1 });
+    res.render("quizpages/home",{count:c.length});
 })
 
 router.get("/login", isAuth, (req, res) => {
@@ -379,5 +383,160 @@ router.post("/chat",isLoggedIn, async (req, res) => {
     res.status(500).json({ reply: "Error talking to Groq." });
   }
 });
+
+//Challenge 1v1
+async function generateQuiz(topic, count) {
+    try {
+        const response = await axios.post(`${process.env.SEND_REQUEST_CHALLENGE}`,
+            {
+                contents: [
+                    {
+                        parts: [{
+                            text: `${process.env.SYSTEMPROMPT}. Generate exactly ${count} multiple-choice quiz questions on the topic: ${topic}. Mix difficulty levels(medium, hard).`
+                        }]
+                    }
+                ]
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+        const content = response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        const jsonString = content.slice(content.indexOf("["), content.lastIndexOf("]") + 1);
+        const questions = JSON.parse(jsonString).slice(0, count);
+
+        return questions.map((q, index) => ({
+            id: index + 1,
+            question: q.question,
+            options: q.options,
+            correctoption: q.correctoption
+        }));
+    } catch (error) {
+        console.error("Error generating quiz with Gemini:", error.message);
+        return "error";
+    }
+}
+
+router.get("/challenge",isLoggedIn,async(req,res)=>{
+    const user = await User.findById(req.user._id);
+    const c = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture').sort({ _id: -1 });
+    res.render("quizpages/challenge",{username:user.username,count:c.length});
+})
+
+router.post("/challenge",isLoggedIn,async(req,res)=>{
+    const {username,topic} = req.body;
+    req.session.opponent=username;
+    req.session.challenge_topic=topic;
+    return res.render("challengeload");
+})
+
+router.post("/create-challenge",isLoggedIn,async(req,res)=>{
+    const opponent = req.session.opponent;
+    const challenge_topic = req.session.challenge_topic;
+    delete req.session.opponent;
+    delete req.session.challenge_topic;
+    try {
+            const user = await User.findOne({username:opponent});
+            if(!user){
+                return res.json({ success: false });
+            }
+            const question = await generateQuiz(challenge_topic, 5);
+            console.log(question);
+            if (!question) {
+                return res.redirect("/challenge");
+            }
+            const challenge = new Challenge({ author:req.user._id,from:req.user._id,to:user._id, questions:question,topic:challenge_topic});
+            await challenge.save();
+            return res.json({ success: true });
+        }
+        catch (e) {
+            console.log(e);
+            res.status(500).json({ error: "Failed to generate quiz" });
+        }
+
+})
+
+router.get("/challenges",isLoggedIn,async(req,res)=>{
+    const challenges1 = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture xp').sort({ _id: 1 });
+    const challenges2 = await Challenge.find({$and:[{$or:[{from:req.user._id},{to:req.user._id}]},{"userAttempts.user":req.user._id}]}).populate('from to','username profilePicture xp').populate('userAttempts.user','username').sort({_id : -1});
+    return res.render("quizpages/challenges",{challenges1,challenges2,user:req.user._id,userr:req.user.username});
+})
+
+router.get("/playchallenge/:id",isLoggedIn,async(req,res)=>{
+    const {id} = req.params;
+    const data = await Challenge.findOne({_id:id});
+    return res.render("quizpages/showchallenge",{data});
+})
+
+router.post("/playchallenge/:id",isLoggedIn,async(req,res)=>{
+    const {id} = req.params;
+    const data = await Challenge.findOne({_id:id});
+    const attempt = data.userAttempts.find(a=>a.user.toString()===req.user._id.toString());
+    
+    if(attempt){
+        return res.redirect("/challenge");
+    }
+    const useranswers = req.body;
+    let score = 0;
+    data.questions.forEach((question, index) => {
+            const useranswer = useranswers[`question_${index}`];
+            if (useranswer && parseInt(useranswer) === question.correctoption) {
+                score++;
+            }
+    });
+    data.userAttempts.push({user:req.user._id,score:score});
+    await data.save();
+    
+    if (data.userAttempts.length===2){
+        const [a1,a2]=data.userAttempts;
+        const user1=await User.findById(a1.user._id);
+        const user2=await User.findById(a2.user._id);
+
+        if(a1.score>a2.score){
+            user1.xp+=5;
+            user1.won+=1;
+            user2.xp-=5;
+            user2.xp=Math.max(0,user2.xp);
+            user2.lost+=1;
+        }
+        else if(a2.score>a1.score){
+            user2.xp+=5;
+            user2.won+=1;
+            user1.xp-=5;
+            user1.xp=Math.max(0,user1.xp);
+            user1.lost+=1;
+        }
+        else{
+            user1.draw+=1;
+            user2.draw+=1;
+        }
+        await user1.save();
+        await user2.save();
+    }
+    return res.redirect("/challenges");
+})
+
+router.get("/search-users",isLoggedIn,async (req, res) => {
+  const q = req.query.q;
+  if (!q) return res.json([]);
+
+  const users = await User.find({
+    username: { $regex: new RegExp("^" + q, "i") },
+    _id: { $ne: req.user._id }
+  }).select("username").limit(5);
+
+  res.json(users);
+});
+
+router.get("/1v1stats/:username",async(req,res)=>{
+    const username= req.params.username;
+    const user = await User.findOne({username:username});
+    if(!user){
+        return res.redirect("/statsnotfound");
+    }
+    return res.render("profile/stats",{won:user.won,lost:user.lost,draw:user.draw,username});
+})
 
 module.exports = router;
