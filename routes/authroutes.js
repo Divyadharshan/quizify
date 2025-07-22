@@ -443,7 +443,6 @@ router.post("/create-challenge",isLoggedIn,async(req,res)=>{
                 return res.json({ success: false });
             }
             const question = await generateQuiz(challenge_topic, 5);
-            console.log(question);
             if (!question) {
                 return res.redirect("/challenge");
             }
@@ -467,6 +466,10 @@ router.get("/challenges",isLoggedIn,async(req,res)=>{
 router.get("/playchallenge/:id",isLoggedIn,async(req,res)=>{
     const {id} = req.params;
     const data = await Challenge.findOne({_id:id});
+    const attempt = data.userAttempts.find(a=>a.user.toString()===req.user._id.toString());
+    if(attempt){
+        return res.redirect("/challenges");
+    }
     return res.render("quizpages/showchallenge",{data});
 })
 
@@ -476,7 +479,7 @@ router.post("/playchallenge/:id",isLoggedIn,async(req,res)=>{
     const attempt = data.userAttempts.find(a=>a.user.toString()===req.user._id.toString());
     
     if(attempt){
-        return res.redirect("/challenge");
+        return res.redirect("/challenges");
     }
     const useranswers = req.body;
     let score = 0;

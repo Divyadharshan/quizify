@@ -148,6 +148,7 @@ app.use((req, res, next) => {
     app.locals.tabswitch = false;//tab switch for site wide
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
+    res.setHeader("Cache-Control", "no-store");
     next();
 })
 
