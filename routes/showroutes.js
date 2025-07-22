@@ -62,7 +62,6 @@ router.post("/", isLoggedIn, async (req, res) => {
         user.totalScore += score;
         user.xp+=1;
         await user.save();
-        console.log("post req");
         return res.render("solved", { data: quiz, score: score, caption: "You have successfully completed the quiz for today!" });
     }
     catch (e) {

@@ -84,18 +84,19 @@
           <i class="fa-solid fa-list-check"></i>&nbsp;Your Quizzes
         </button>
       </a>
+      <a href="/challenge">
       <div style="position: relative; display: inline-block;">
-        <a href="/challenge">
           <button class="attendquiz-btn">
             <i class="fa-solid fa-user"></i>&nbsp;&nbsp;1v1&nbsp;&nbsp;<i class="fa-solid fa-user"></i>
           </button>
-        </a>
+        
         <% if (count>0) { %>
           <span class="badge">
             <%=count%>
           </span>
           <% } %>
       </div>
+      </a>
       <a href="/attendquiz">
         <button class="attendquiz-btn">
           <i class="fa-solid fa-q"></i>&nbsp;&nbsp;Attend Quiz
