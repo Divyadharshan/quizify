@@ -34,7 +34,7 @@
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
             <div class="invalid-feedback" style="color: red; font-size: 12px; display: none;">
-                Username can only contain letters, numbers, and underscores.
+                Allowed: a–z, 0–9, _ only.
             </div>
 
             <label for="email">Email</label>
@@ -55,7 +55,7 @@
                 form.addEventListener('submit', function (event) {
                     const usernameInput = form.querySelector('input[name="username"]');
                     const feedback = form.querySelector('.invalid-feedback');
-                    const usernamePattern = /^[A-Za-z0-9_]+$/;
+                    const usernamePattern = /^[a-z0-9_]+$/;
 
                     if (!usernamePattern.test(usernameInput.value)) {
                         usernameInput.setCustomValidity('Invalid');
