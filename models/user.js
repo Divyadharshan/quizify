@@ -7,10 +7,11 @@ const userschema = new Schema({
     email:{type:String,unique:true},
     logoutAttempts:[{date:String,times:Number}],
     quizAttempts:[{date:String,score:Number}],
+    sudokuAttempts: [{date:String,score:Number}],
     totalScore:{type:Number,default:0},
     profilePicture:{
         type:String,
-        default : "https://static-00.iconduck.com/assets.00/profile-circle-icon-256x256-cm91gqm2.png"
+        default : "https://res.cloudinary.com/di5q8uqqc/image/upload/v1752672038/dp_e8jusg.jpg"
     },
     followers: [
         {

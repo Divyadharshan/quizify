@@ -68,16 +68,16 @@
   <%- include("../partials/loader") %>
   <%- include("../partials/bot") %>
     <img src="logo.png" width="250" height="250" />
-    <h2>WELCOME TO QUIZIFY, SOLVE & EXPLORE NEW QUIZZES EVERYDAY</h2>
+    <h2>WELCOME TO QUIZIFY, SOLVE & EXPLORE NEW CHALLENGES EVERYDAY</h2>
     <div>
       <a href="/profile/<%=currentUser.username%>">
         <button class="profile-btn">
-          <i class="fa-solid fa-user"></i> PROFILE
+          <i class="fa-solid fa-user"></i> Profile
         </button>
       </a>
-      <a href="/show">
+      <a href="/dailychallenge">
         <button class="attendquiz-btn">
-          <i class="fa-solid fa-calendar-day"></i>&nbsp;Daily Quiz
+          <i class="fa-solid fa-calendar-day"></i>&nbsp;Daily Challenge
         </button>
       </a>
       <a href="/viewquizzes/<%=currentUser._id%>">
@@ -127,7 +127,7 @@
       </a>
       <a href="/logout">
         <button class="logout-btn">
-          <i class="fa-solid fa-right-from-bracket"></i> LOGOUT
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
       </a>
     </div>

@@ -84,13 +84,13 @@ passport.use(new GoogleStrategy({
             } else {
                 let username;
                 let unique=false;
-                while(!unique){
-                    const random=Math.floor(Math.random()*10000);//Random number between 0-9999
-                    const tusername=`quizzer${random}`;
-                    const check=await User.findOne({username:tusername});
-                    if(!check){
-                        username=tusername;
-                        unique=true;
+                while (!unique) {
+                    const random = Math.floor(Math.random() * 10000);//Random number between 0-9999
+                    const tusername = `quizzer${random}`;
+                    const check = await User.findOne({ username: tusername });
+                    if (!check) {
+                        username = tusername;
+                        unique = true;
                     }
                 }
                 user = new User({
@@ -179,11 +179,13 @@ app.use("/generatequiz", usergeneratedroutes);
 app.use("/follow", followroutes);
 app.use("/profile", profileroutes);
 
-app.get("/solved", isLoggedIn, (req, res) => {
-    res.render("solved");
-})
 app.get("/load", isLoggedIn, (req, res) => {
-    res.render("load");
+    if(req.session.quiztopic && req.session.qcount){
+        return res.render("load");
+    }
+    else{
+        return res.redirect("/");
+    }
 })
 app.get("/editprofile", isLoggedIn,(req, res) => {
     res.render("profile/editprofile");
@@ -191,14 +193,14 @@ app.get("/editprofile", isLoggedIn,(req, res) => {
 app.put("/editprofile", isLoggedIn,upload.single("image"),async(req, res) => {
     try{
         const user = await User.findById(req.user._id);
-    if (req.body.username){
-        user.username=req.body.username;
-    }
-    if (req.file){
-        user.profilePicture=req.file.path;
-    }
-    await user.save();
-    req.login(user, (err) => {
+        if (req.body.username){
+            user.username=req.body.username;
+        }
+        if (req.file) {
+            user.profilePicture=req.file.path;
+        }
+        await user.save();
+        req.login(user, (err) => {
             if (err) {
                 return res.redirect("/editprofile");
             }
@@ -207,7 +209,7 @@ app.put("/editprofile", isLoggedIn,upload.single("image"),async(req, res) => {
     }
     catch(e){
         console.log(e);
-        req.flash("error","Username already exists");
+        req.flash("error", "Username already exists");
         return res.redirect("/editprofile");
     }
 })

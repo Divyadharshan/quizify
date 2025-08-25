@@ -4,6 +4,7 @@ const app = express();
 const User = require("../models/user");
 const UserQuiz = require("../models/userquiz");
 const Challenge = require("../models/challenge");
+const Sudoku = require("../models/sudoku");
 const { isLoggedIn, isAuth, storeReturnTo } = require("../middleware");
 const { transporter } = require("../mailconfig");
 const jwt = require("jsonwebtoken");
@@ -12,9 +13,9 @@ const Groq = require("groq-sdk").default;
 const axios = require("axios");
 const user = require("../models/user");
 
-router.get("/", isLoggedIn, async(req, res) => {
-    const c = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture').sort({ _id: -1 });
-    res.render("quizpages/home",{count:c.length});
+router.get("/", isLoggedIn, async (req, res) => {
+    const c = await Challenge.find({ $or: [{ from: req.user._id }, { to: req.user._id }], userAttempts: { $not: { $elemMatch: { user: req.user._id } } } }).populate('from to', 'username profilePicture').sort({ _id: -1 });
+    res.render("quizpages/home", { count: c.length });
 })
 
 router.get("/login", isAuth, (req, res) => {
@@ -296,7 +297,7 @@ router.get("/updatequiz/:id", isLoggedIn, async (req, res) => {
         if (!(req.user._id.toString() === Quiz[0].author.toString())) {
             return res.redirect("/restricted");
         }
-        res.render("quizpages/updatequiz", {quizzes:Quiz})
+        res.render("quizpages/updatequiz", { quizzes: Quiz })
     }
     catch (e) {
         return res.redirect("/notfound");
@@ -334,15 +335,15 @@ router.put("/viewquiz/:id", isLoggedIn, async (req, res) => {
 });
 
 router.delete("/viewquiz/:id", isLoggedIn, async (req, res) => {
-    try{
+    try {
         const Quiz = await UserQuiz.find({ _id: req.params.id });
-        if(!(req.user._id.toString()===Quiz[0].author.toString())){
+        if (!(req.user._id.toString() === Quiz[0].author.toString())) {
             return res.redirect("/restricted");
         }
         await UserQuiz.deleteOne({ _id: req.params.id });
         return res.redirect(`/viewquizzes/${req.user._id}`);
     }
-    catch(e){
+    catch (e) {
         return res.redirect("/error");
     }
 })
@@ -359,29 +360,29 @@ router.get("/warning", (req, res) => {
 
 //Chatbot
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY_CHATBOT });
-router.post("/chat",isLoggedIn, async (req, res) => {
-  const userMessage = req.body.messages;
-  try {
-    const response = await groq.chat.completions.create({
-      model: process.env.MODEL2,
-      messages: [
-        {
-          role: "system",
-          content: process.env.BOTPROMPT,
-          },
-        {
-          role: "user",
-          content: userMessage,
-        },
-      ],
-    });
+router.post("/chat", isLoggedIn, async (req, res) => {
+    const userMessage = req.body.messages;
+    try {
+        const response = await groq.chat.completions.create({
+            model: process.env.MODEL2,
+            messages: [
+                {
+                    role: "system",
+                    content: process.env.BOTPROMPT,
+                },
+                {
+                    role: "user",
+                    content: userMessage,
+                },
+            ],
+        });
 
-    const reply = response.choices?.[0]?.message?.content || "Sorry, no response.";
-    res.json({ reply });
-  } catch (error) {
-    console.error("Groq error:", error);
-    res.status(500).json({ reply: "Error talking to Groq." });
-  }
+        const reply = response.choices?.[0]?.message?.content || "Sorry, no response.";
+        res.json({ reply });
+    } catch (error) {
+        console.error("Groq error:", error);
+        res.status(500).json({ reply: "Error talking to Groq." });
+    }
 });
 
 //Challenge 1v1
@@ -419,121 +420,121 @@ async function generateQuiz(topic, count) {
     }
 }
 
-router.get("/challenge",isLoggedIn,async(req,res)=>{
+router.get("/challenge", isLoggedIn, async (req, res) => {
     const user = await User.findById(req.user._id);
-    const c = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture').sort({ _id: -1 });
-    res.render("quizpages/challenge",{username:user.username,count:c.length});
+    const c = await Challenge.find({ $or: [{ from: req.user._id }, { to: req.user._id }], userAttempts: { $not: { $elemMatch: { user: req.user._id } } } }).populate('from to', 'username profilePicture').sort({ _id: -1 });
+    res.render("quizpages/challenge", { username: user.username, count: c.length });
 })
 
-router.post("/challenge",isLoggedIn,async(req,res)=>{
-    const {username,topic} = req.body;
-    req.session.opponent=username;
-    req.session.challenge_topic=topic;
+router.post("/challenge", isLoggedIn, async (req, res) => {
+    const { username, topic } = req.body;
+    req.session.opponent = username;
+    req.session.challenge_topic = topic;
     return res.render("challengeload");
 })
 
-router.post("/create-challenge",isLoggedIn,async(req,res)=>{
+router.post("/create-challenge", isLoggedIn, async (req, res) => {
     const opponent = req.session.opponent;
     const challenge_topic = req.session.challenge_topic;
     delete req.session.opponent;
     delete req.session.challenge_topic;
     try {
-            const user = await User.findOne({username:opponent});
-            if(!user){
-                return res.json({ success: false });
-            }
-            const question = await generateQuiz(challenge_topic, 5);
-            if (!question) {
-                return res.redirect("/challenge");
-            }
-            const challenge = new Challenge({ author:req.user._id,from:req.user._id,to:user._id, questions:question,topic:challenge_topic});
-            await challenge.save();
-            return res.json({ success: true });
+        const user = await User.findOne({ username: opponent });
+        if (!user) {
+            return res.json({ success: false });
         }
-        catch (e) {
-            console.log(e);
-            res.status(500).json({ error: "Failed to generate quiz" });
+        const question = await generateQuiz(challenge_topic, 5);
+        if (!question) {
+            return res.redirect("/challenge");
         }
+        const challenge = new Challenge({ author: req.user._id, from: req.user._id, to: user._id, questions: question, topic: challenge_topic });
+        await challenge.save();
+        return res.json({ success: true });
+    }
+    catch (e) {
+        console.log(e);
+        res.status(500).json({ error: "Failed to generate quiz" });
+    }
 
 })
 
-router.get("/challenges",isLoggedIn,async(req,res)=>{
-    const challenges1 = await Challenge.find({$or:[{from:req.user._id},{to:req.user._id}],userAttempts:{$not:{$elemMatch:{user:req.user._id}}}}).populate('from to', 'username profilePicture xp').sort({ _id: 1 });
-    const challenges2 = await Challenge.find({$and:[{$or:[{from:req.user._id},{to:req.user._id}]},{"userAttempts.user":req.user._id}]}).populate('from to','username profilePicture xp').populate('userAttempts.user','username').sort({_id : -1});
-    return res.render("quizpages/challenges",{challenges1,challenges2,user:req.user._id,userr:req.user.username});
+router.get("/challenges", isLoggedIn, async (req, res) => {
+    const challenges1 = await Challenge.find({ $or: [{ from: req.user._id }, { to: req.user._id }], userAttempts: { $not: { $elemMatch: { user: req.user._id } } } }).populate('from to', 'username profilePicture xp').sort({ _id: 1 });
+    const challenges2 = await Challenge.find({ $and: [{ $or: [{ from: req.user._id }, { to: req.user._id }] }, { "userAttempts.user": req.user._id }] }).populate('from to', 'username profilePicture xp').populate('userAttempts.user', 'username').sort({ _id: -1 });
+    return res.render("quizpages/challenges", { challenges1, challenges2, user: req.user._id, userr: req.user.username });
 })
 
-router.get("/playchallenge/:id",isLoggedIn,async(req,res)=>{
-    const {id} = req.params;
-    const data = await Challenge.findOne({_id:id});
-    const attempt = data.userAttempts.find(a=>a.user.toString()===req.user._id.toString());
-    if(attempt){
+router.get("/playchallenge/:id", isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+    const data = await Challenge.findOne({ _id: id });
+    const attempt = data.userAttempts.find(a => a.user.toString() === req.user._id.toString());
+    if (attempt) {
         return res.redirect("/challenges");
     }
-    return res.render("quizpages/showchallenge",{data});
+    return res.render("quizpages/showchallenge", { data });
 })
 
-router.post("/playchallenge/:id",isLoggedIn,async(req,res)=>{
-    const {id} = req.params;
-    const data = await Challenge.findOne({_id:id});
-    const attempt = data.userAttempts.find(a=>a.user.toString()===req.user._id.toString());
-    
-    if(attempt){
+router.post("/playchallenge/:id", isLoggedIn, async (req, res) => {
+    const { id } = req.params;
+    const data = await Challenge.findOne({ _id: id });
+    const attempt = data.userAttempts.find(a => a.user.toString() === req.user._id.toString());
+
+    if (attempt) {
         return res.redirect("/challenges");
     }
     const useranswers = req.body;
     let score = 0;
     data.questions.forEach((question, index) => {
-            const useranswer = useranswers[`question_${index}`];
-            if (useranswer && parseInt(useranswer) === question.correctoption) {
-                score++;
-            }
+        const useranswer = useranswers[`question_${index}`];
+        if (useranswer && parseInt(useranswer) === question.correctoption) {
+            score++;
+        }
     });
-    data.userAttempts.push({user:req.user._id,score:score});
+    data.userAttempts.push({ user: req.user._id, score: score });
     await data.save();
-    
-    if (data.userAttempts.length===2){
-        const [a1,a2]=data.userAttempts;
-        const user1=await User.findById(a1.user._id);
-        const user2=await User.findById(a2.user._id);
 
-        if(a1.score>a2.score){
-            user1.xp+=5;
-            user1.won+=1;
+    if (data.userAttempts.length === 2) {
+        const [a1, a2] = data.userAttempts;
+        const user1 = await User.findById(a1.user._id);
+        const user2 = await User.findById(a2.user._id);
+
+        if (a1.score > a2.score) {
+            user1.xp += 5;
+            user1.won += 1;
             user1.recentform.push(1);
-            if(user1.recentform.length>5){
+            if (user1.recentform.length > 5) {
                 user1.recentform.shift();
             }
-            user2.xp-=2;
-            user2.lost+=1;
+            user2.xp -= 2;
+            user2.lost += 1;
             user2.recentform.push(-1);
-            if(user2.recentform.length>5){
+            if (user2.recentform.length > 5) {
                 user2.recentform.shift();
             }
         }
-        else if(a2.score>a1.score){
-            user2.xp+=5;
-            user2.won+=1;
+        else if (a2.score > a1.score) {
+            user2.xp += 5;
+            user2.won += 1;
             user2.recentform.push(1);
-            if(user2.recentform.length>5){
+            if (user2.recentform.length > 5) {
                 user2.recentform.shift();
             }
-            user1.xp-=2;
-            user1.lost+=1;
+            user1.xp -= 2;
+            user1.lost += 1;
             user1.recentform.push(-1);
-            if(user1.recentform.length>5){
+            if (user1.recentform.length > 5) {
                 user1.recentform.shift();
             }
         }
-        else{
-            user1.draw+=1;
+        else {
+            user1.draw += 1;
             user1.recentform.push(0);
-            if(user1.recentform.length>5){
+            if (user1.recentform.length > 5) {
                 user1.recentform.shift();
             }
-            user2.draw+=1;
+            user2.draw += 1;
             user2.recentform.push(0);
-            if(user2.recentform.length>5){
+            if (user2.recentform.length > 5) {
                 user2.recentform.shift();
             }
         }
@@ -543,25 +544,67 @@ router.post("/playchallenge/:id",isLoggedIn,async(req,res)=>{
     return res.redirect("/challenges");
 })
 
-router.get("/search-users",isLoggedIn,async (req, res) => {
-  const q = req.query.q;
-  if (!q) return res.json([]);
+router.get("/search-users", isLoggedIn, async (req, res) => {
+    const q = req.query.q;
+    if (!q) return res.json([]);
 
-  const users = await User.find({
-    username: { $regex: new RegExp("^" + q, "i") },
-    _id: { $ne: req.user._id }
-  }).select("username").limit(5);
+    const users = await User.find({
+        username: { $regex: new RegExp("^" + q, "i") },
+        _id: { $ne: req.user._id }
+    }).select("username").limit(5);
 
-  res.json(users);
+    res.json(users);
 });
 
-router.get("/1v1stats/:username",async(req,res)=>{
-    const username= req.params.username;
-    const user = await User.findOne({username:username});
-    if(!user){
+router.get("/1v1stats/:username", async (req, res) => {
+    const username = req.params.username;
+    const user = await User.findOne({ username: username });
+    if (!user) {
         return res.redirect("/statsnotfound");
     }
-    return res.render("profile/stats",{won:user.won,lost:user.lost,draw:user.draw,username,recentform:user.recentform});
+    return res.render("profile/stats", { won: user.won, lost: user.lost, draw: user.draw, username, recentform: user.recentform });
+})
+
+router.get("/sudoku", isLoggedIn, async (req, res) => {
+    const today = new Date().toLocaleDateString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+    }).split("/").reverse().join("-");
+    const sudoku = await Sudoku.findOne({date:today});
+    const user = await User.findById(req.user._id);
+    const attemptexist = user.sudokuAttempts.find(attempt => attempt.date === today);
+    if (attemptexist) {
+        return res.render("solved", {caption:"You've completed today's sudoku challenge. Stay sharp for tomorrow!"});
+    }
+    return res.render("quizpages/sudoku", {
+        puzzle: sudoku?.puzzle,
+        solution: sudoku?.solution,
+    });
+});
+
+router.post("/sudoku",isLoggedIn,async(req,res)=>{
+    const today = new Date().toLocaleDateString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+    }).split("/").reverse().join("-");
+    const user = await User.findById(req.user._id);
+    const attemptexist = user.sudokuAttempts.find(attempt => attempt.date === today);
+    if (attemptexist) {
+        return res.render("solved", {caption:"You already solved today's sudoku!"});
+    }
+    user.sudokuAttempts.push({ date: today, score:10 });
+    user.totalScore += 10;
+    user.xp += 5;
+    await user.save();
+    return res.render("solved",{caption:"You solved today's sudoku!"})
+})
+
+router.get("/dailychallenge",isLoggedIn,async(req,res)=>{
+    res.render("quizpages/dailychallenge");
 })
 
 module.exports = router;

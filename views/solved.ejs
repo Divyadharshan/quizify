@@ -12,7 +12,9 @@
 <body>
     <%- include("partials/loader") %>
     <h1><%=caption%></h1>
-    <h2>Score : <%=score%>/<%=data.questions.length%></h2>
+    <% if (typeof data !== "undefined" && data && data.questions) { %>
+  <h2>Score : <%= score %>/<%= data.questions.length %></h2>
+<% } %>
     <a href="/">
     <button class="small-btn" style="width:90%">
         BACK TO HOME
@@ -27,13 +29,13 @@
                 confetti({
                     particleCount: 5,
                     angle: 60,
-                    spread: 55,
+                    spread: 30,
                     origin: { x: 0 }
                 });
                 confetti({
                     particleCount: 5,
                     angle: 120,
-                    spread: 55,
+                    spread: 30,
                     origin: { x: 1 }
                 });
     
@@ -45,7 +47,16 @@
     
         // Run confetti when the page loads
         // Displays only if the score is 50% of the total score
-        if (`<%=score%>`/`<%=data.questions.length%>`>=0.5){
+        <% if (typeof data !== "undefined" && data && data.questions) { %>
+            const score = <%= score %>;
+            const total = <%= data.questions.length %>;
+            if (total > 0 && (score / total) >= 0.5) {
+                window.onload = launchConfetti;
+            }
+        <% } %>
+        const caption = "<%=caption%>";
+        console.log(caption);
+        if(caption.includes("sudoku")){
             window.onload = launchConfetti;
         }
     </script>
