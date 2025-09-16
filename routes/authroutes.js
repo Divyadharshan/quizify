@@ -41,17 +41,18 @@ router.post("/register", isAuth, async (req, res, next) => {
         }
         const token = jwt.sign({ email, username }, process.env.JWTSECRET, { expiresIn: "300s" });
         const verifylink = `https://${req.headers.host}/verifyaccount/${token}`;
+        const message = `
+         <p>Dear ${username},</p>
+         <p>Click the link below to verify your account:</p>
+         <p><a href="${verifylink}" target="_blank" style="color:#7B16FF; text-decoration:none;">Verify</a></p>
+         <p>This link expires in <b>5 minutes</b>.</p>
+         <br>
+         <p>Happy Quizzing,<br>The Quizify Team 🌟</p>`;
         const mailOptions = {
             from: process.env.EMAIL,
             to: email,
             subject: "Verify Your Account - Quizify",
-            text: `
-Dear ${username},
-Click the link below to verify your account:
-${verifylink}
-This link expires in 5 minutes.\n
-Happy Quizzing,
-The Quizify Team 🌟`
+            html: message
         }
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
@@ -202,18 +203,17 @@ router.post("/changepwd", isAuth, async (req, res) => {
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWTSECRET, { expiresIn: '120s' });
     const resetURL = `https://${req.headers.host}/resetpassword?id=${user._id}&token=${token}`;
     const username = user.username;
+    const message = `
+    <p>You are receiving this mail because you (or someone else) have requested to know your username/change password.</p>
+    <p>Your username is: <b>${username}</b></p>
+    <p>In case you need to change your password, use the this link : <a href="${resetURL}" target="_blank">Reset Password</a></p><br>
+    <p>If you did not request this, please ignore this email, and your password will remain unchanged.</p>
+    <p>Best regards,<br>The Quizify Team 🌟</p>`;
     const mailOptions = {
         from: process.env.EMAIL,
         to: email,
         subject: 'Quizify - Forgot Password/Username',
-        text: `
-You are receiving this mail because you(or someone else) have requested to know username/change password.\n
-Your username is: ${username}\n
-In case you need to change password use the link below:
-${resetURL}\n
-If you did not request this, please ignore this email, and your password will remain unchanged.\n
-Best regards,
-The Quizify Team 🌟`
+        html: message
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
@@ -605,6 +605,30 @@ router.post("/sudoku",isLoggedIn,async(req,res)=>{
 
 router.get("/dailychallenge",isLoggedIn,async(req,res)=>{
     res.render("quizpages/dailychallenge");
+})
+
+router.get("/checkusername",async(req,res)=>{
+    const {username}=req.query;
+    if(!username){
+        return res.json({exists:true,message:"Empty Username"});
+    }
+    const exist=await User.findOne({username});
+    if(exist){
+        return res.json({exists:true,message:"Username already taken"});
+    }
+    return res.json({exists:false,message:"Username available"});
+})
+
+router.get("/checkemail",async(req,res)=>{
+    const {email}=req.query;
+    if(!email){
+        return res.json({exists:true,message:"Empty Email"});
+    }
+    const exist=await User.findOne({email});
+    if(exist){
+        return res.json({exists:true,message:"Email already registered"});
+    }
+    return res.json({exists:false,message:"Email available"});
 })
 
 module.exports = router;
